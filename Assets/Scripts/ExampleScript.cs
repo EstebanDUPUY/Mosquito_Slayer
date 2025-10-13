@@ -10,6 +10,7 @@ public class ExampleScript : MonoBehaviour
     //
     #region VARIABLES
 
+    [Header("Always Use Headers For variables")]
     [HideInInspector] public int hiddenPublicVariable; // When you need a public variable but don't want to have it in the inspector
     [SerializeField] private float hiddenPrivateVariable; // When you need a private variable and want to have it in the inspector
     public bool PublicVariable; // When you need a public variable and want to have it in the inspector
