@@ -4,31 +4,29 @@ using System.Collections;
 
 public class AimIntro : MonoBehaviour
 {
-    [Header("Références")]
     public TMP_Text instructionText;
-    public GameObject miniGame;  // ton objet ou ton script du mini-jeu
-
-    [Header("Paramètres")]
     public float displayTime = 5f;
     public string introMessage = "Visez les zones non couvertes !";
+    public GameObject[] miniGames; // 4 mini-jeux à activer
 
     void Start()
     {
         instructionText.text = introMessage;
-        miniGame.SetActive(false); // le mini-jeu ne tourne pas encore
-        StartCoroutine(HideAfterDelay());
+
+        // Tout désactiver avant de commencer
+        foreach (var mg in miniGames)
+            mg.SetActive(false);
+
+        StartCoroutine(LaunchMiniGames());
     }
 
-    private IEnumerator HideAfterDelay()
+    private IEnumerator LaunchMiniGames()
     {
         yield return new WaitForSeconds(displayTime);
-
-        // Cache l’écran d’intro
         gameObject.SetActive(false);
 
-        // Lance le mini-jeu
-        miniGame.SetActive(true);
-        // Ou, si tu veux déclencher une fonction spécifique :
-        // miniGame.GetComponent<AimMiniGame>().StartMiniGame();
+        // Active tous les mini-jeux
+        foreach (var mg in miniGames)
+            mg.SetActive(true);
     }
 }

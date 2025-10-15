@@ -217,7 +217,7 @@ public class AimMiniGame : MonoBehaviour
     private void UpdateShotsUI()
     {
         if (shotsText)
-            shotsText.text = $"{shotsRemaining} Tirs restants";
+            shotsText.text = $"{shotsRemaining} piqûres restants";
     }
 
     private IEnumerator ReloadNextRound()

@@ -1655,7 +1655,7 @@ GameObject:
   - component: {fileID: 1072994926}
   - component: {fileID: 1072994928}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: IntroPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1678,8 +1678,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.00012207031, y: -1.6804199}
+  m_SizeDelta: {x: 33.6082, y: 43.6907}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1072994926
 MonoBehaviour:
@@ -1732,9 +1732,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AimIntro
   instructionText: {fileID: 348861237}
-  miniGame: {fileID: 95340381}
   displayTime: 5
   introMessage: Visez les zones non couvertes !
+  miniGames: []
 --- !u!1 &1099759717
 GameObject:
   m_ObjectHideFlags: 0
@@ -1792,7 +1792,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 3 Tirs restants
+  m_text: "3 piq\xFBres restants"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
