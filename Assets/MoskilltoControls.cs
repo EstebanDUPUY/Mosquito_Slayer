@@ -115,7 +115,7 @@ public partial class @MoskilltoControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""0f201b3b-5545-4356-91a9-1327ba91281f"",
-                    ""path"": ""<Keyboard>/z"",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

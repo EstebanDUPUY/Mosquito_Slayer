@@ -2,28 +2,41 @@
 using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class AimMiniGame : MonoBehaviour
 {
     [Header("Références")]
     public Transform zoneTopLeft;
     public Transform zoneBottomRight;
-    public Transform crosshair;       // Le viseur du joueur
-    public TMP_Text infoText;         // Texte d'information ou de score
+    public Transform crosshair;
+    public HumanTarget human;
+    public TMP_Text infoText;
+    public TMP_Text timerText;
+    public TMP_Text scoreText;
 
-    [Header("Paramètres de mouvement")]
-    public float moveSpeed = 3f;      // Vitesse de déplacement du viseur
-    public float moveInterval = 1.2f; // Temps avant de choisir une nouvelle destination
-    public float roundDuration = 5f;  // Durée totale de la manche
+    [Header("Paramètres de jeu")]
+    public float moveSpeed = 3f;
+    public float moveInterval = 1.2f;
+    public float roundDuration = 5f;
+    public int totalRounds = 3;
+    public int maxShotsPerRound = 3;
+
+    [Header("Zones piquables")]
+    public List<TargetZone> targetZones = new List<TargetZone>();
+    [Range(0f, 1f)]
+    public float chanceToGoNearTarget = 0.75f;
+    public float offsetAroundTarget = 0.5f;
 
     private MoskilltoControls controls;
-    private bool hasShot = false;
     private bool isPerturbed = false;
+    private bool canShoot = true;
     private float playerScore = 0;
 
-    // Déplacement fluide
     private Vector3 currentTarget;
     private float moveTimer = 0f;
+    private int shotsRemaining;
+    private int currentRound = 1;
 
     private void Awake()
     {
@@ -46,66 +59,82 @@ public class AimMiniGame : MonoBehaviour
 
     private void Start()
     {
-        currentTarget = GetRandomPointInZone();
         StartCoroutine(GameLoop());
     }
 
     private IEnumerator GameLoop()
     {
         if (infoText) infoText.text = "Prépare-toi...";
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1.2f);
         if (infoText) infoText.text = "";
 
-        float t = 0f;
-        hasShot = false;
-        playerScore = 0;
+        for (currentRound = 1; currentRound <= totalRounds; currentRound++)
+        {
+            yield return StartCoroutine(PlayRound(currentRound));
+            yield return new WaitForSeconds(1f);
+        }
+
+        if (infoText)
+            infoText.text = $"Fin du mini-jeu ! Score final : {playerScore}";
+        if (scoreText)
+            scoreText.text = $"Score : {playerScore}";
+    }
+
+    private IEnumerator PlayRound(int round)
+    {
+        shotsRemaining = maxShotsPerRound;
+        canShoot = true;
         moveTimer = 0f;
+        float t = 0f;
+
+        if (crosshair) crosshair.gameObject.SetActive(true);
+        if (infoText)
+            infoText.text = $"Manche {round} - {shotsRemaining} tirs restants";
+
+        currentTarget = GetRandomPointInZone();
+
+        // L’humain fera un saut aléatoire pendant cette manche
+        if (human != null)
+            StartCoroutine(human.RandomJumpInRound(roundDuration));
 
         while (t < roundDuration)
         {
             t += Time.deltaTime;
             moveTimer -= Time.deltaTime;
 
-            // Changer régulièrement de direction
+            if (timerText)
+                timerText.text = $"{Mathf.Ceil(roundDuration - t)}";
+
             if (moveTimer <= 0f)
             {
                 currentTarget = GetRandomPointInZone();
                 moveTimer = moveInterval;
             }
 
-            // Déplacement fluide vers la cible
             Vector3 nextPos = Vector3.Lerp(crosshair.position, currentTarget, Time.deltaTime * moveSpeed);
+            if (isPerturbed) nextPos += (Vector3)Random.insideUnitCircle * 0.1f;
 
-            // Si le joueur est perturbé : petit tremblement
-            if (isPerturbed)
-                nextPos += (Vector3)Random.insideUnitCircle * 0.1f;
-
-            // Limite du cadre
             float minX = zoneTopLeft.position.x;
             float maxX = zoneBottomRight.position.x;
             float maxY = zoneTopLeft.position.y;
             float minY = zoneBottomRight.position.y;
-
             nextPos.x = Mathf.Clamp(nextPos.x, minX, maxX);
             nextPos.y = Mathf.Clamp(nextPos.y, minY, maxY);
 
             crosshair.position = nextPos;
-
             yield return null;
         }
 
         if (infoText)
-            infoText.text = $"Score final : {playerScore}";
+            infoText.text = $"Manche {round} terminée !";
     }
 
     private void OnShoot(InputAction.CallbackContext ctx)
     {
-        if (hasShot) return;
-        hasShot = true;
+        if (!canShoot || shotsRemaining <= 0) return;
+        shotsRemaining--;
 
         Vector2 origin = crosshair.position;
-
-        // Vérifie s'il y a une cible directement sous le viseur
         Collider2D hit = Physics2D.OverlapPoint(origin);
 
         if (hit != null)
@@ -113,23 +142,44 @@ public class AimMiniGame : MonoBehaviour
             TargetZone zone = hit.GetComponent<TargetZone>();
             if (zone != null)
             {
-                int pts = zone.GetScore();
+                int pts = zone.GetScore(origin);
                 playerScore += pts;
 
+                if (human != null)
+                    human.OnBitten();
+
                 if (infoText)
-                    infoText.text = $"Touché : {zone.zoneName} (+{pts})";
+                    infoText.text = $"Touché : {zone.zoneName} (+{pts}) | Tirs restants : {shotsRemaining}";
             }
             else
             {
                 if (infoText)
-                    infoText.text = "Raté !";
+                    infoText.text = $"Raté ! Tirs restants : {shotsRemaining}";
             }
         }
         else
         {
             if (infoText)
-                infoText.text = "Raté !";
+                infoText.text = $"Raté ! Tirs restants : {shotsRemaining}";
         }
+
+        if (scoreText)
+            scoreText.text = $"Score : {playerScore}";
+
+        if (shotsRemaining <= 0)
+        {
+            canShoot = false;
+            if (crosshair) crosshair.gameObject.SetActive(false);
+            StartCoroutine(ReloadNextRound());
+        }
+    }
+
+    private IEnumerator ReloadNextRound()
+    {
+        if (infoText)
+            infoText.text = "Manche terminée, préparation...";
+        yield return new WaitForSeconds(1f);
+        canShoot = true;
     }
 
     private void OnSabotage(InputAction.CallbackContext ctx)
@@ -151,6 +201,20 @@ public class AimMiniGame : MonoBehaviour
         float maxX = zoneBottomRight.position.x;
         float maxY = zoneTopLeft.position.y;
         float minY = zoneBottomRight.position.y;
+
+        if (targetZones.Count > 0 && Random.value < chanceToGoNearTarget)
+        {
+            TargetZone chosen = targetZones[Random.Range(0, targetZones.Count)];
+            Vector3 around = chosen.transform.position;
+
+            float offsetX = Random.Range(-offsetAroundTarget, offsetAroundTarget);
+            float offsetY = Random.Range(-offsetAroundTarget, offsetAroundTarget);
+
+            Vector3 nearTarget = around + new Vector3(offsetX, offsetY, 0);
+            nearTarget.x = Mathf.Clamp(nearTarget.x, minX, maxX);
+            nearTarget.y = Mathf.Clamp(nearTarget.y, minY, maxY);
+            return nearTarget;
+        }
 
         float x = Random.Range(minX, maxX);
         float y = Random.Range(minY, maxY);
