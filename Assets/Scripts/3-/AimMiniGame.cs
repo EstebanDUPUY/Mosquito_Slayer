@@ -22,6 +22,7 @@ public class AimMiniGame : MonoBehaviour
     public float roundDuration = 5f;
     public int totalRounds = 3;
     public int maxShotsPerRound = 3;
+    public float shootCooldown = 0.5f; // cooldown entre deux tirs
 
     [Header("Zones piquables")]
     public List<TargetZone> targetZones = new List<TargetZone>();
@@ -38,6 +39,7 @@ public class AimMiniGame : MonoBehaviour
     private float moveTimer = 0f;
     private int shotsRemaining;
     private int currentRound = 1;
+    private float lastShootTime = -999f;
 
     private void Awake()
     {
@@ -97,7 +99,7 @@ public class AimMiniGame : MonoBehaviour
         currentTarget = GetRandomPointInZone();
 
         if (human != null)
-            StartCoroutine(human.RandomJumpInRound(roundDuration));
+            human.StartJumpsForRound(roundDuration);
 
         while (t < roundDuration)
         {
@@ -105,7 +107,7 @@ public class AimMiniGame : MonoBehaviour
             moveTimer -= Time.deltaTime;
 
             if (timerText)
-                timerText.text = $"{Mathf.Ceil(roundDuration - t)}";
+                timerText.text = $"{Mathf.Ceil(roundDuration - t)} secs restantes";
 
             if (moveTimer <= 0f)
             {
@@ -134,6 +136,16 @@ public class AimMiniGame : MonoBehaviour
     private void OnShoot(InputAction.CallbackContext ctx)
     {
         if (!canShoot || shotsRemaining <= 0) return;
+
+        // cooldown de tir
+        if (Time.time - lastShootTime < shootCooldown)
+        {
+            if (infoText)
+                infoText.text = "Recharge...";
+            return;
+        }
+        lastShootTime = Time.time;
+
         shotsRemaining--;
         UpdateShotsUI();
 
@@ -180,7 +192,7 @@ public class AimMiniGame : MonoBehaviour
     private void UpdateShotsUI()
     {
         if (shotsText)
-            shotsText.text = $"Tirs : {shotsRemaining}/{maxShotsPerRound}";
+            shotsText.text = $"Tirs restants : {shotsRemaining}";
     }
 
     private IEnumerator ReloadNextRound()

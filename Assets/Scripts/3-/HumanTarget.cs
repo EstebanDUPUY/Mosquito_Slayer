@@ -1,19 +1,30 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using System.Collections;
 
 public class HumanTarget : MonoBehaviour
 {
     [Header("Sprites")]
-    public Sprite normalSprite;
-    public Sprite hurtSprite;
+    public Sprite normalSprite;   // Sprite par d√©faut
+    public Sprite hurtSprite;     // Sprite quand piqu√©
+    public Sprite jumpSprite;     // Sprite pendant le saut
 
-    [Header("RÈglages d'animation")]
+    [Header("R√©glages de saut")]
     public float jumpForce = 2f;
     public float jumpDuration = 0.5f;
+    public int maxJumpsPerRound = 2;
+    public float minTimeBetweenJumps = 1.5f;
+    public float maxTimeBetweenJumps = 3.5f;
+
+    [Header("Effet Idle (Flip)")]
+    public float idleFlipIntervalMin = 1.5f; // temps min entre deux flips
+    public float idleFlipIntervalMax = 3f;   // temps max entre deux flips
 
     private SpriteRenderer sr;
     private Vector3 basePosition;
-    private bool hasJumpedThisRound = false;
+    private bool isJumping = false;
+    private bool isHurt = false;
+    private Coroutine jumpRoutine;
+    private Coroutine idleRoutine;
 
     private void Awake()
     {
@@ -21,7 +32,21 @@ public class HumanTarget : MonoBehaviour
         basePosition = transform.position;
     }
 
-    // AppelÈe quand le moustique touche
+    private void OnEnable()
+    {
+        // Lance l'effet idle
+        idleRoutine = StartCoroutine(IdleFlipRoutine());
+    }
+
+    private void OnDisable()
+    {
+        if (idleRoutine != null)
+            StopCoroutine(idleRoutine);
+    }
+
+    /// <summary>
+    /// R√©agit √† une piq√ªre de moustique.
+    /// </summary>
     public void OnBitten()
     {
         if (sr == null || hurtSprite == null) return;
@@ -30,29 +55,50 @@ public class HumanTarget : MonoBehaviour
 
     private IEnumerator ChangeSpriteRoutine()
     {
+        isHurt = true;
         sr.sprite = hurtSprite;
         yield return new WaitForSeconds(0.4f);
-        sr.sprite = normalSprite;
+        isHurt = false;
+        if (!isJumping)
+            sr.sprite = normalSprite;
     }
 
-    // AppelÈe par le mini-jeu une fois par manche
-    public IEnumerator RandomJumpInRound(float roundDuration)
+    /// <summary>
+    /// Lance les sauts al√©atoires pendant la manche.
+    /// </summary>
+    public void StartJumpsForRound(float roundDuration)
     {
-        hasJumpedThisRound = false;
+        if (jumpRoutine != null)
+            StopCoroutine(jumpRoutine);
 
-        // DÈtermine un moment alÈatoire dans la manche pour sauter
-        float jumpTime = Random.Range(1f, roundDuration - 1f);
-        yield return new WaitForSeconds(jumpTime);
+        jumpRoutine = StartCoroutine(JumpRoutine(roundDuration));
+    }
 
-        if (!hasJumpedThisRound)
+    private IEnumerator JumpRoutine(float roundDuration)
+    {
+        int jumpsDone = 0;
+        float elapsed = 0f;
+
+        while (elapsed < roundDuration && jumpsDone < maxJumpsPerRound)
         {
-            hasJumpedThisRound = true;
+            float delay = Random.Range(minTimeBetweenJumps, maxTimeBetweenJumps);
+            yield return new WaitForSeconds(delay);
+
+            elapsed += delay;
+            if (elapsed >= roundDuration) break;
+
+            jumpsDone++;
             yield return StartCoroutine(DoJump());
         }
     }
 
     private IEnumerator DoJump()
     {
+        isJumping = true;
+
+        if (sr != null && jumpSprite != null)
+            sr.sprite = jumpSprite;
+
         float elapsed = 0f;
         Vector3 start = basePosition;
 
@@ -66,5 +112,28 @@ public class HumanTarget : MonoBehaviour
         }
 
         transform.position = basePosition;
+        isJumping = false;
+
+        if (!isHurt && sr != null)
+            sr.sprite = normalSprite;
+    }
+
+    /// <summary>
+    /// Fait un petit flip horizontal de temps en temps (idle).
+    /// </summary>
+    private IEnumerator IdleFlipRoutine()
+    {
+        while (true)
+        {
+            // Attente al√©atoire entre deux flips
+            float wait = Random.Range(idleFlipIntervalMin, idleFlipIntervalMax);
+            yield return new WaitForSeconds(wait);
+
+            // Ne pas faire l'idle si l'humain saute ou se fait piquer
+            if (!isJumping && !isHurt && sr != null)
+            {
+                sr.flipX = !sr.flipX;
+            }
+        }
     }
 }

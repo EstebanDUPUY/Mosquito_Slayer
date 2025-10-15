@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: b1e3b73dd47cdf042ab1b4f380a561de
+guid: 227403179b0497a4ca2a8b7e47f863e9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2852443166016097488
-    second: Crosshair_0
-  - first:
-      213: 528818951868578185
-    second: Crosshair_1
-  - first:
-      213: 6965800085573315464
-    second: Crosshair_2
-  - first:
-      213: 4247978643584613240
-    second: Crosshair_3
+      213: -4925706274733741374
+    second: BackgroundRoom_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -109,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Crosshair_0
+      name: BackgroundRoom_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 541
-        height: 462
+        width: 1024
+        height: 1024
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 033be9bad061a68d0800000000000000
-      internalID: -2852443166016097488
+      spriteID: 2ca259a9d3064abb0800000000000000
+      internalID: -4925706274733741374
       vertices: []
       indices: 
       edges: []
@@ -134,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: db55f566543f3e74aae36149cd57e240
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -142,11 +133,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":541.0,"y":462.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      Crosshair_0: -2852443166016097488
+      BackgroundRoom_0: -4925706274733741374
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
