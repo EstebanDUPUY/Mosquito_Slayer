@@ -52,7 +52,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "1-Suck",
+                    "name": "Suck",
                     "type": "Button",
                     "id": "55db1a5e-d776-4e5c-8905-75c6da1b412f",
                     "expectedControlType": "",
@@ -61,7 +61,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "1-BlindEnemies",
+                    "name": "BlindEnemies",
                     "type": "Button",
                     "id": "0a288856-acdc-4bbb-8768-b190265a8663",
                     "expectedControlType": "",
@@ -342,7 +342,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "1-Suck",
+                    "action": "Suck",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -353,7 +353,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "1-Suck",
+                    "action": "Suck",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -364,7 +364,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "1-BlindEnemies",
+                    "action": "BlindEnemies",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -375,7 +375,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "1-BlindEnemies",
+                    "action": "BlindEnemies",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
