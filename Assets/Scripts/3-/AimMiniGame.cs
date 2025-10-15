@@ -11,9 +11,10 @@ public class AimMiniGame : MonoBehaviour
     public Transform zoneBottomRight;
     public Transform crosshair;
     public HumanTarget human;
-    public TMP_Text infoText;
-    public TMP_Text timerText;
-    public TMP_Text scoreText;
+    public TMP_Text infoText;       // Texte général ("Touché !", "Raté !", etc.)
+    public TMP_Text timerText;      // Affiche le timer
+    public TMP_Text scoreText;      // Score total
+    public TMP_Text shotsText;      // Affiche le nombre de tirs restants
 
     [Header("Paramètres de jeu")]
     public float moveSpeed = 3f;
@@ -88,12 +89,13 @@ public class AimMiniGame : MonoBehaviour
         float t = 0f;
 
         if (crosshair) crosshair.gameObject.SetActive(true);
+
         if (infoText)
-            infoText.text = $"Manche {round} - {shotsRemaining} tirs restants";
+            infoText.text = $"Manche {round}";
+        UpdateShotsUI();
 
         currentTarget = GetRandomPointInZone();
 
-        // L’humain fera un saut aléatoire pendant cette manche
         if (human != null)
             StartCoroutine(human.RandomJumpInRound(roundDuration));
 
@@ -133,6 +135,7 @@ public class AimMiniGame : MonoBehaviour
     {
         if (!canShoot || shotsRemaining <= 0) return;
         shotsRemaining--;
+        UpdateShotsUI();
 
         Vector2 origin = crosshair.position;
         Collider2D hit = Physics2D.OverlapPoint(origin);
@@ -149,18 +152,18 @@ public class AimMiniGame : MonoBehaviour
                     human.OnBitten();
 
                 if (infoText)
-                    infoText.text = $"Touché : {zone.zoneName} (+{pts}) | Tirs restants : {shotsRemaining}";
+                    infoText.text = $"Touché : {zone.zoneName} (+{pts})";
             }
             else
             {
                 if (infoText)
-                    infoText.text = $"Raté ! Tirs restants : {shotsRemaining}";
+                    infoText.text = "Raté !";
             }
         }
         else
         {
             if (infoText)
-                infoText.text = $"Raté ! Tirs restants : {shotsRemaining}";
+                infoText.text = "Raté !";
         }
 
         if (scoreText)
@@ -172,6 +175,12 @@ public class AimMiniGame : MonoBehaviour
             if (crosshair) crosshair.gameObject.SetActive(false);
             StartCoroutine(ReloadNextRound());
         }
+    }
+
+    private void UpdateShotsUI()
+    {
+        if (shotsText)
+            shotsText.text = $"Tirs : {shotsRemaining}/{maxShotsPerRound}";
     }
 
     private IEnumerator ReloadNextRound()
