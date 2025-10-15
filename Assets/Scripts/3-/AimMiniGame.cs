@@ -41,6 +41,10 @@ public class AimMiniGame : MonoBehaviour
     private int currentRound = 1;
     private float lastShootTime = -999f;
 
+    // Crosshair feedback visuel
+    private SpriteRenderer crosshairRenderer;
+    private Color crosshairBaseColor;
+
     private void Awake()
     {
         controls = new MoskilltoControls();
@@ -62,6 +66,10 @@ public class AimMiniGame : MonoBehaviour
 
     private void Start()
     {
+        crosshairRenderer = crosshair.GetComponent<SpriteRenderer>();
+        if (crosshairRenderer != null)
+            crosshairBaseColor = crosshairRenderer.color;
+
         StartCoroutine(GameLoop());
     }
 
@@ -165,17 +173,25 @@ public class AimMiniGame : MonoBehaviour
 
                 if (infoText)
                     infoText.text = $"Touché : {zone.zoneName} (+{pts})";
+
+                // Crosshair devient rouge quand il touche
+                StartCoroutine(FlashCrosshair(Color.red));
             }
             else
             {
                 if (infoText)
                     infoText.text = "Raté !";
+
+                // Crosshair devient gris si on rate
+                StartCoroutine(FlashCrosshair(Color.gray));
             }
         }
         else
         {
             if (infoText)
                 infoText.text = "Raté !";
+
+            StartCoroutine(FlashCrosshair(Color.gray));
         }
 
         if (scoreText)
@@ -189,10 +205,19 @@ public class AimMiniGame : MonoBehaviour
         }
     }
 
+    private IEnumerator FlashCrosshair(Color flashColor, float duration = 0.15f)
+    {
+        if (crosshairRenderer == null) yield break;
+
+        crosshairRenderer.color = flashColor;
+        yield return new WaitForSeconds(duration);
+        crosshairRenderer.color = crosshairBaseColor;
+    }
+
     private void UpdateShotsUI()
     {
         if (shotsText)
-            shotsText.text = $"Tirs restants : {shotsRemaining}";
+            shotsText.text = $"{shotsRemaining} Tirs restants";
     }
 
     private IEnumerator ReloadNextRound()
