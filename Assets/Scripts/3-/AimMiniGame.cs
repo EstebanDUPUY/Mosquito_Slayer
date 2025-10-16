@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,263 +6,233 @@ using System.Collections.Generic;
 public class AimMiniGame : MonoBehaviour
 {
     [Header("Références")]
-    public Transform zoneTopLeft;
-    public Transform zoneBottomRight;
-    public Transform crosshair;
-    public HumanTarget human;
-    public TMP_Text infoText;       // Texte général ("Touché !", "Raté !", etc.)
-    public TMP_Text timerText;      // Affiche le timer
-    public TMP_Text scoreText;      // Score total
-    public TMP_Text shotsText;      // Affiche le nombre de tirs restants
+    public Transform human;
+    public TMP_Text infoText;
+    public TMP_Text timerText;
+    public TMP_Text scoreText;
 
     [Header("Paramètres de jeu")]
     public float moveSpeed = 3f;
-    public float moveInterval = 1.2f;
     public float roundDuration = 5f;
     public int totalRounds = 3;
     public int maxShotsPerRound = 3;
-    public float shootCooldown = 0.5f; // cooldown entre deux tirs
 
-    [Header("Zones piquables")]
-    public List<TargetZone> targetZones = new List<TargetZone>();
-    [Range(0f, 1f)]
-    public float chanceToGoNearTarget = 0.75f;
-    public float offsetAroundTarget = 0.5f;
+    [Header("Sabotage")]
+    public float sabotageDuration = 1f;     // durée du tremblement
+    public float sabotageIntensity = 0.5f;  // amplitude du tremblement
+    public float sabotageCooldown = 5f;     // délai avant qu'un joueur puisse resaboter
 
-    private MoskilltoControls controls;
-    private bool isPerturbed = false;
-    private bool canShoot = true;
-    private float playerScore = 0;
+    [Header("Zones de jeu")]
+    public Transform zoneTopLeft;
+    public Transform zoneBottomRight;
 
-    private Vector3 currentTarget;
-    private float moveTimer = 0f;
-    private int shotsRemaining;
+    [System.Serializable]
+    public class PlayerData
+    {
+        public int playerID = 1;
+        public Transform crosshair;
+        public KeyCode shootKey = KeyCode.E;
+        public KeyCode sabotageKey = KeyCode.A;
+        public Color color = Color.white;
+
+        [HideInInspector] public int score;
+        [HideInInspector] public int shotsUsed;
+        [HideInInspector] public bool isSabotaged;
+        [HideInInspector] public float sabotageTimer; // cooldown individuel
+    }
+
+    [Header("Joueurs")]
+    public PlayerData[] players; // 4 joueurs
+
+    private float timer;
     private int currentRound = 1;
-    private float lastShootTime = -999f;
+    private bool isRunning = false;
 
-    // Crosshair feedback visuel
-    private SpriteRenderer crosshairRenderer;
-    private Color crosshairBaseColor;
-
-    private void Awake()
+    // ----------------------------------------------------------
+    void Start()
     {
-        controls = new MoskilltoControls();
+        ResetAllPlayers();
+        StartCoroutine(StartMiniGame());
     }
 
-    private void OnEnable()
+    private IEnumerator StartMiniGame()
     {
-        controls.MiniGame_Aim.Enable();
-        controls.MiniGame_Aim.Shoot.performed += OnShoot;
-        controls.MiniGame_Aim.Sabotage.performed += OnSabotage;
+        yield return new WaitForSeconds(0.5f);
+        StartRound();
     }
 
-    private void OnDisable()
+    private void StartRound()
     {
-        controls.MiniGame_Aim.Shoot.performed -= OnShoot;
-        controls.MiniGame_Aim.Sabotage.performed -= OnSabotage;
-        controls.MiniGame_Aim.Disable();
-    }
-
-    private void Start()
-    {
-        crosshairRenderer = crosshair.GetComponent<SpriteRenderer>();
-        if (crosshairRenderer != null)
-            crosshairBaseColor = crosshairRenderer.color;
-
-        StartCoroutine(GameLoop());
-    }
-
-    private IEnumerator GameLoop()
-    {
-        if (infoText) infoText.text = "Prépare-toi...";
-        yield return new WaitForSeconds(1.2f);
-        if (infoText) infoText.text = "";
-
-        for (currentRound = 1; currentRound <= totalRounds; currentRound++)
+        isRunning = true;
+        timer = roundDuration;
+        foreach (var p in players)
         {
-            yield return StartCoroutine(PlayRound(currentRound));
-            yield return new WaitForSeconds(1f);
+            p.shotsUsed = 0;
+            p.sabotageTimer = 0;
         }
-
-        if (infoText)
-            infoText.text = $"Fin du mini-jeu ! Score final : {playerScore}";
-        if (scoreText)
-            scoreText.text = $"Score : {playerScore}";
+        infoText.text = $"Manche {currentRound}/{totalRounds}";
     }
 
-    private IEnumerator PlayRound(int round)
+    private void EndRound()
     {
-        shotsRemaining = maxShotsPerRound;
-        canShoot = true;
-        moveTimer = 0f;
-        float t = 0f;
+        isRunning = false;
+        currentRound++;
 
-        if (crosshair) crosshair.gameObject.SetActive(true);
-
-        if (infoText)
-            infoText.text = $"Manche {round}";
-        UpdateShotsUI();
-
-        currentTarget = GetRandomPointInZone();
-
-        if (human != null)
-            human.StartJumpsForRound(roundDuration);
-
-        while (t < roundDuration)
+        if (currentRound > totalRounds)
         {
-            t += Time.deltaTime;
-            moveTimer -= Time.deltaTime;
-
-            if (timerText)
-                timerText.text = $"{Mathf.Ceil(roundDuration - t)} secs restantes";
-
-            if (moveTimer <= 0f)
-            {
-                currentTarget = GetRandomPointInZone();
-                moveTimer = moveInterval;
-            }
-
-            Vector3 nextPos = Vector3.Lerp(crosshair.position, currentTarget, Time.deltaTime * moveSpeed);
-            if (isPerturbed) nextPos += (Vector3)Random.insideUnitCircle * 0.1f;
-
-            float minX = zoneTopLeft.position.x;
-            float maxX = zoneBottomRight.position.x;
-            float maxY = zoneTopLeft.position.y;
-            float minY = zoneBottomRight.position.y;
-            nextPos.x = Mathf.Clamp(nextPos.x, minX, maxX);
-            nextPos.y = Mathf.Clamp(nextPos.y, minY, maxY);
-
-            crosshair.position = nextPos;
-            yield return null;
-        }
-
-        if (infoText)
-            infoText.text = $"Manche {round} terminée !";
-    }
-
-    private void OnShoot(InputAction.CallbackContext ctx)
-    {
-        if (!canShoot || shotsRemaining <= 0) return;
-
-        // cooldown de tir
-        if (Time.time - lastShootTime < shootCooldown)
-        {
-            if (infoText)
-                infoText.text = "Recharge...";
-            return;
-        }
-        lastShootTime = Time.time;
-
-        shotsRemaining--;
-        UpdateShotsUI();
-
-        Vector2 origin = crosshair.position;
-        Collider2D hit = Physics2D.OverlapPoint(origin);
-
-        if (hit != null)
-        {
-            TargetZone zone = hit.GetComponent<TargetZone>();
-            if (zone != null)
-            {
-                int pts = zone.GetScore(origin);
-                playerScore += pts;
-
-                if (human != null)
-                    human.OnBitten();
-
-                if (infoText)
-                    infoText.text = $"Touché : {zone.zoneName} (+{pts})";
-
-                // Crosshair devient rouge quand il touche
-                StartCoroutine(FlashCrosshair(Color.red));
-            }
-            else
-            {
-                if (infoText)
-                    infoText.text = "Raté !";
-
-                // Crosshair devient gris si on rate
-                StartCoroutine(FlashCrosshair(Color.gray));
-            }
+            EndGame();
         }
         else
         {
-            if (infoText)
-                infoText.text = "Raté !";
-
-            StartCoroutine(FlashCrosshair(Color.gray));
+            StartCoroutine(NextRoundDelay());
         }
+    }
 
-        if (scoreText)
-            scoreText.text = $"Score : {playerScore}";
+    private IEnumerator NextRoundDelay()
+    {
+        infoText.text = "Préparez-vous pour la prochaine manche...";
+        yield return new WaitForSeconds(2f);
+        StartRound();
+    }
 
-        if (shotsRemaining <= 0)
+    private void EndGame()
+    {
+        isRunning = false;
+        infoText.text = "Fin du mini-jeu !";
+
+        string results = "";
+        foreach (var p in players)
+            results += $"J{p.playerID}: {p.score}  ";
+        scoreText.text = results;
+    }
+
+    // ----------------------------------------------------------
+    void Update()
+    {
+        if (!isRunning) return;
+
+        timer -= Time.deltaTime;
+        timerText.text = timer.ToString("F1") + "s";
+
+        if (timer <= 0)
         {
-            canShoot = false;
-            if (crosshair) crosshair.gameObject.SetActive(false);
-            StartCoroutine(ReloadNextRound());
+            EndRound();
+            return;
         }
-    }
 
-    private IEnumerator FlashCrosshair(Color flashColor, float duration = 0.15f)
-    {
-        if (crosshairRenderer == null) yield break;
-
-        crosshairRenderer.color = flashColor;
-        yield return new WaitForSeconds(duration);
-        crosshairRenderer.color = crosshairBaseColor;
-    }
-
-    private void UpdateShotsUI()
-    {
-        if (shotsText)
-            shotsText.text = $"{shotsRemaining} piqûres restants";
-    }
-
-    private IEnumerator ReloadNextRound()
-    {
-        if (infoText)
-            infoText.text = "Manche terminée, préparation...";
-        yield return new WaitForSeconds(1f);
-        canShoot = true;
-    }
-
-    private void OnSabotage(InputAction.CallbackContext ctx)
-    {
-        if (!isPerturbed)
-            StartCoroutine(Perturbation());
-    }
-
-    private IEnumerator Perturbation()
-    {
-        isPerturbed = true;
-        yield return new WaitForSeconds(1.5f);
-        isPerturbed = false;
-    }
-
-    private Vector3 GetRandomPointInZone()
-    {
-        float minX = zoneTopLeft.position.x;
-        float maxX = zoneBottomRight.position.x;
-        float maxY = zoneTopLeft.position.y;
-        float minY = zoneBottomRight.position.y;
-
-        if (targetZones.Count > 0 && Random.value < chanceToGoNearTarget)
+        foreach (var p in players)
         {
-            TargetZone chosen = targetZones[Random.Range(0, targetZones.Count)];
-            Vector3 around = chosen.transform.position;
+            // Cooldown du sabotage
+            if (p.sabotageTimer > 0)
+                p.sabotageTimer -= Time.deltaTime;
 
-            float offsetX = Random.Range(-offsetAroundTarget, offsetAroundTarget);
-            float offsetY = Random.Range(-offsetAroundTarget, offsetAroundTarget);
+            MoveCrosshair(p);
 
-            Vector3 nearTarget = around + new Vector3(offsetX, offsetY, 0);
-            nearTarget.x = Mathf.Clamp(nearTarget.x, minX, maxX);
-            nearTarget.y = Mathf.Clamp(nearTarget.y, minY, maxY);
-            return nearTarget;
+            if (Input.GetKeyDown(p.shootKey) && p.shotsUsed < maxShotsPerRound)
+                HandleShot(p);
+
+            if (Input.GetKeyDown(p.sabotageKey))
+                HandleSabotage(p);
+        }
+    }
+
+    // ----------------------------------------------------------
+    private void MoveCrosshair(PlayerData p)
+    {
+        if (p.isSabotaged)
+        {
+            Vector3 randomOffset = new Vector3(
+                Random.Range(-sabotageIntensity, sabotageIntensity),
+                Random.Range(-sabotageIntensity, sabotageIntensity),
+                0
+            );
+            p.crosshair.position += randomOffset * Time.deltaTime * 20f;
+            return;
         }
 
-        float x = Random.Range(minX, maxX);
-        float y = Random.Range(minY, maxY);
-        return new Vector3(x, y, crosshair.position.z);
+        Vector2 min = zoneTopLeft.position;
+        Vector2 max = zoneBottomRight.position;
+        Vector3 target = new Vector3(
+            Mathf.Lerp(min.x, max.x, Mathf.PerlinNoise(Time.time * 0.5f + p.playerID, 0)),
+            Mathf.Lerp(min.y, max.y, Mathf.PerlinNoise(0, Time.time * 0.5f + p.playerID)),
+            0
+        );
+
+        p.crosshair.position = Vector3.Lerp(p.crosshair.position, target, Time.deltaTime * moveSpeed);
+    }
+
+    private void HandleShot(PlayerData p)
+    {
+        p.shotsUsed++;
+
+        float dist = Vector2.Distance(p.crosshair.position, human.position);
+        int points = CalculateScore(dist);
+        p.score += points;
+
+        infoText.text = $"J{p.playerID} tire ! +{points}";
+        UpdateScoreDisplay();
+    }
+
+    private int CalculateScore(float distance)
+    {
+        if (distance < 0.2f) return 5;
+        if (distance < 0.4f) return 4;
+        if (distance < 0.6f) return 3;
+        if (distance < 0.8f) return 2;
+        if (distance < 1.0f) return 1;
+        return 0;
+    }
+
+    private void UpdateScoreDisplay()
+    {
+        string result = "";
+        foreach (var p in players)
+            result += $"J{p.playerID}:{p.score}  ";
+        scoreText.text = result;
+    }
+
+    private void ResetAllPlayers()
+    {
+        foreach (var p in players)
+        {
+            p.score = 0;
+            p.shotsUsed = 0;
+            p.isSabotaged = false;
+            p.sabotageTimer = 0;
+        }
+        UpdateScoreDisplay();
+    }
+
+    // ----------------------------------------------------------
+    private void HandleSabotage(PlayerData attacker)
+    {
+        if (attacker.sabotageTimer > 0)
+        {
+            infoText.text = $"J{attacker.playerID} doit attendre ({attacker.sabotageTimer:F1}s)";
+            return;
+        }
+
+        // Liste des cibles possibles (tous sauf soi-même)
+        List<PlayerData> potentialTargets = new List<PlayerData>();
+        foreach (var p in players)
+            if (p != attacker)
+                potentialTargets.Add(p);
+
+        if (potentialTargets.Count == 0) return;
+
+        // Choisit un joueur au hasard
+        PlayerData target = potentialTargets[Random.Range(0, potentialTargets.Count)];
+        StartCoroutine(SabotageRoutine(target));
+
+        infoText.text = $"J{attacker.playerID} perturbe J{target.playerID} !";
+
+        attacker.sabotageTimer = sabotageCooldown; // reset cooldown
+    }
+
+    private IEnumerator SabotageRoutine(PlayerData target)
+    {
+        target.isSabotaged = true;
+        yield return new WaitForSeconds(sabotageDuration);
+        target.isSabotaged = false;
     }
 }

@@ -356,11 +356,11 @@ Transform:
   m_GameObject: {fileID: 57016004}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0004, z: 0}
+  m_LocalPosition: {x: 0.26843262, y: -0.9435697, z: 0}
   m_LocalScale: {x: 1.1620265, y: 0.97656405, z: 1.1423023}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 95340383}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &72919492
 GameObject:
@@ -509,12 +509,12 @@ GameObject:
   - component: {fileID: 95340383}
   - component: {fileID: 95340382}
   m_Layer: 0
-  m_Name: GameLogic
+  m_Name: GameLogic_P1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &95340382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -527,29 +527,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0db3f7031022b58439dd012ef46ac5cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AimMiniGame
-  zoneTopLeft: {fileID: 761428003}
-  zoneBottomRight: {fileID: 1834192303}
-  crosshair: {fileID: 890297811}
-  human: {fileID: 950639680}
+  human: {fileID: 950639679}
   infoText: {fileID: 72919494}
   timerText: {fileID: 227396517}
   scoreText: {fileID: 1982001439}
-  shotsText: {fileID: 1099759719}
   moveSpeed: 3
-  moveInterval: 1
   roundDuration: 15
   totalRounds: 3
   maxShotsPerRound: 3
-  shootCooldown: 0.5
-  targetZones:
-  - {fileID: 721330040}
-  - {fileID: 34140814}
-  - {fileID: 381193627}
-  - {fileID: 1561566028}
-  - {fileID: 104134857}
-  - {fileID: 1304416248}
-  chanceToGoNearTarget: 0.75
-  offsetAroundTarget: 0
+  sabotageDuration: 1
+  sabotageIntensity: 0.5
+  zoneTopLeft: {fileID: 761428003}
+  zoneBottomRight: {fileID: 1834192303}
+  players:
+  - playerID: 1
+    crosshair: {fileID: 890297811}
+    shootKey: 122
+    sabotageKey: 115
+    color: {r: 0, g: 0, b: 0, a: 0}
+    score: 0
+    shotsUsed: 0
+    isSabotaged: 0
+  - playerID: 2
+    crosshair: {fileID: 890297811}
+    shootKey: 121
+    sabotageKey: 104
+    color: {r: 0, g: 0, b: 0, a: 0}
+    score: 0
+    shotsUsed: 0
+    isSabotaged: 0
+  - playerID: 3
+    crosshair: {fileID: 890297811}
+    shootKey: 112
+    sabotageKey: 109
+    color: {r: 0, g: 0, b: 0, a: 0}
+    score: 0
+    shotsUsed: 0
+    isSabotaged: 0
+  - playerID: 4
+    crosshair: {fileID: 890297811}
+    shootKey: 273
+    sabotageKey: 274
+    color: {r: 0, g: 0, b: 0, a: 0}
+    score: 0
+    shotsUsed: 0
+    isSabotaged: 0
 --- !u!4 &95340383
 Transform:
   m_ObjectHideFlags: 0
@@ -558,11 +580,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 95340381}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.26844, y: 0.94394, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.26843262, y: 0.9439697, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 57016006}
+  - {fileID: 950639679}
+  - {fileID: 890297811}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &104134854
@@ -1410,12 +1435,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 890297809}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.26843262, y: -0.9439697, z: 0}
   m_LocalScale: {x: 0.597, y: 0.597, z: 0.597}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 95340383}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &930970665
 GameObject:
@@ -1511,11 +1536,12 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1072994925}
   - {fileID: 227396516}
   - {fileID: 1099759718}
   - {fileID: 72919493}
   - {fileID: 1982001438}
-  - {fileID: 1072994925}
+  - {fileID: 1074579914}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1607,8 +1633,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 950639677}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.26843262, y: -0.9439697, z: 0}
   m_LocalScale: {x: 1.5504935, y: 1.5504935, z: 1.5504935}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1618,7 +1644,7 @@ Transform:
   - {fileID: 1561566026}
   - {fileID: 104134855}
   - {fileID: 1304416246}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 95340383}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &950639680
 MonoBehaviour:
@@ -1732,9 +1758,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AimIntro
   instructionText: {fileID: 348861237}
+  miniGames:
+  - {fileID: 95340381}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   displayTime: 5
   introMessage: Visez les zones non couvertes !
-  miniGames: []
+--- !u!1 &1074579913
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1074579914}
+  m_Layer: 5
+  m_Name: GameArea
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1074579914
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1074579913}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 930970669}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1099759717
 GameObject:
   m_ObjectHideFlags: 0
@@ -1792,7 +1857,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "3 piq\xFBres restants"
+  m_text: "3 piq\xFBres restantes"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2566,7 +2631,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 95340383}
     m_Modifications:
     - target: {fileID: 4306755537849219384, guid: 54756a910ef32044e8758fa5f0cf707d, type: 3}
       propertyPath: m_Name
@@ -2622,11 +2687,8 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 95340383}
-  - {fileID: 57016006}
-  - {fileID: 1547973189}
-  - {fileID: 950639679}
-  - {fileID: 6704339857048778446}
   - {fileID: 930970669}
+  - {fileID: 1547973189}
   - {fileID: 1540114278}
   - {fileID: 761428003}
   - {fileID: 1834192303}

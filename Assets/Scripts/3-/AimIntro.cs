@@ -4,18 +4,22 @@ using System.Collections;
 
 public class AimIntro : MonoBehaviour
 {
+    [Header("Références")]
     public TMP_Text instructionText;
+    public GameObject[] miniGames; // les 4 GameLogic à activer après l’intro
+
+    [Header("Paramètres")]
     public float displayTime = 5f;
-    public string introMessage = "Visez les zones non couvertes !";
-    public GameObject[] miniGames; // 4 mini-jeux à activer
+    [TextArea] public string introMessage = "Visez les zones non couvertes !";
 
     void Start()
     {
-        instructionText.text = introMessage;
+        if (instructionText)
+            instructionText.text = introMessage;
 
-        // Tout désactiver avant de commencer
+        // Désactive les mini-jeux pendant l’intro
         foreach (var mg in miniGames)
-            mg.SetActive(false);
+            if (mg) mg.SetActive(false);
 
         StartCoroutine(LaunchMiniGames());
     }
@@ -23,10 +27,12 @@ public class AimIntro : MonoBehaviour
     private IEnumerator LaunchMiniGames()
     {
         yield return new WaitForSeconds(displayTime);
+
+        // Cache l’écran d’intro
         gameObject.SetActive(false);
 
-        // Active tous les mini-jeux
+        // Active les mini-jeux
         foreach (var mg in miniGames)
-            mg.SetActive(true);
+            if (mg) mg.SetActive(true);
     }
 }
