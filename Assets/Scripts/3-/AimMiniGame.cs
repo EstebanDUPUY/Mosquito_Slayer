@@ -146,7 +146,7 @@ public class AimMiniGame : MonoBehaviour
     // ----------------------------------------------------------
     public void OnShoot(InputAction.CallbackContext context)
     {
-        Debug.Log("OnShoot déclenché !");
+        //Debug.Log("OnShoot déclenché !");
         if (!context.performed || !isRunning) return;
         if (shotsUsed >= maxShotsPerRound) return;
 
