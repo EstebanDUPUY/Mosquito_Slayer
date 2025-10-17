@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,9 +8,17 @@ public class AimMiniGame : MonoBehaviour
 {
     [Header("Références")]
     public Transform human;
+    public Transform crosshair;
     public TMP_Text infoText;
     public TMP_Text timerText;
     public TMP_Text scoreText;
+
+    [Header("Zones piquables")]
+    public List<Transform> targetZones = new List<Transform>();
+
+    [Header("Zones limites (fallback)")]
+    public Transform zoneTopLeft;
+    public Transform zoneBottomRight;
 
     [Header("Paramètres de jeu")]
     public float moveSpeed = 3f;
@@ -18,40 +27,25 @@ public class AimMiniGame : MonoBehaviour
     public int maxShotsPerRound = 3;
 
     [Header("Sabotage")]
-    public float sabotageDuration = 1f;     // durée du tremblement
-    public float sabotageIntensity = 0.5f;  // amplitude du tremblement
-    public float sabotageCooldown = 5f;     // délai avant qu'un joueur puisse resaboter
-
-    [Header("Zones de jeu")]
-    public Transform zoneTopLeft;
-    public Transform zoneBottomRight;
-
-    [System.Serializable]
-    public class PlayerData
-    {
-        public int playerID = 1;
-        public Transform crosshair;
-        public KeyCode shootKey = KeyCode.E;
-        public KeyCode sabotageKey = KeyCode.A;
-        public Color color = Color.white;
-
-        [HideInInspector] public int score;
-        [HideInInspector] public int shotsUsed;
-        [HideInInspector] public bool isSabotaged;
-        [HideInInspector] public float sabotageTimer; // cooldown individuel
-    }
-
-    [Header("Joueurs")]
-    public PlayerData[] players; // 4 joueurs
+    public float sabotageDuration = 1f;
+    public float sabotageIntensity = 0.5f;
+    public float sabotageCooldown = 5f;
 
     private float timer;
     private int currentRound = 1;
     private bool isRunning = false;
+    private bool isSabotaged = false;
+    private bool canSabotage = true;
+    private int shotsUsed = 0;
+    private int score = 0;
+
+    private int currentTargetIndex = 0;
 
     // ----------------------------------------------------------
-    void Start()
+    void OnEnable()
     {
-        ResetAllPlayers();
+        // Démarre automatiquement dès activation du GameObject
+        ResetGame();
         StartCoroutine(StartMiniGame());
     }
 
@@ -65,11 +59,7 @@ public class AimMiniGame : MonoBehaviour
     {
         isRunning = true;
         timer = roundDuration;
-        foreach (var p in players)
-        {
-            p.shotsUsed = 0;
-            p.sabotageTimer = 0;
-        }
+        shotsUsed = 0;
         infoText.text = $"Manche {currentRound}/{totalRounds}";
     }
 
@@ -79,13 +69,9 @@ public class AimMiniGame : MonoBehaviour
         currentRound++;
 
         if (currentRound > totalRounds)
-        {
             EndGame();
-        }
         else
-        {
             StartCoroutine(NextRoundDelay());
-        }
     }
 
     private IEnumerator NextRoundDelay()
@@ -99,11 +85,7 @@ public class AimMiniGame : MonoBehaviour
     {
         isRunning = false;
         infoText.text = "Fin du mini-jeu !";
-
-        string results = "";
-        foreach (var p in players)
-            results += $"J{p.playerID}: {p.score}  ";
-        scoreText.text = results;
+        scoreText.text = $"Score total : {score}";
     }
 
     // ----------------------------------------------------------
@@ -120,59 +102,86 @@ public class AimMiniGame : MonoBehaviour
             return;
         }
 
-        foreach (var p in players)
-        {
-            // Cooldown du sabotage
-            if (p.sabotageTimer > 0)
-                p.sabotageTimer -= Time.deltaTime;
-
-            MoveCrosshair(p);
-
-            if (Input.GetKeyDown(p.shootKey) && p.shotsUsed < maxShotsPerRound)
-                HandleShot(p);
-
-            if (Input.GetKeyDown(p.sabotageKey))
-                HandleSabotage(p);
-        }
+        MoveCrosshair();
     }
 
     // ----------------------------------------------------------
-    private void MoveCrosshair(PlayerData p)
+    private void MoveCrosshair()
     {
-        if (p.isSabotaged)
+        if (isSabotaged)
         {
             Vector3 randomOffset = new Vector3(
                 Random.Range(-sabotageIntensity, sabotageIntensity),
                 Random.Range(-sabotageIntensity, sabotageIntensity),
                 0
             );
-            p.crosshair.position += randomOffset * Time.deltaTime * 20f;
+            crosshair.position += randomOffset * Time.deltaTime * 20f;
             return;
         }
 
-        Vector2 min = zoneTopLeft.position;
-        Vector2 max = zoneBottomRight.position;
-        Vector3 target = new Vector3(
-            Mathf.Lerp(min.x, max.x, Mathf.PerlinNoise(Time.time * 0.5f + p.playerID, 0)),
-            Mathf.Lerp(min.y, max.y, Mathf.PerlinNoise(0, Time.time * 0.5f + p.playerID)),
-            0
-        );
+        if (targetZones != null && targetZones.Count > 0)
+        {
+            Transform targetZone = targetZones[currentTargetIndex];
+            Vector3 wander = targetZone.position + (Vector3)(Random.insideUnitCircle * 0.2f);
+            crosshair.position = Vector3.MoveTowards(crosshair.position, wander, moveSpeed * Time.deltaTime);
 
-        p.crosshair.position = Vector3.Lerp(p.crosshair.position, target, Time.deltaTime * moveSpeed);
+            if (Vector2.Distance(crosshair.position, targetZone.position) < 0.1f)
+            {
+                currentTargetIndex = Random.Range(0, targetZones.Count);
+            }
+        }
+        else
+        {
+            Vector2 min = zoneTopLeft.position;
+            Vector2 max = zoneBottomRight.position;
+            Vector3 fallbackTarget = new Vector3(
+                Mathf.Lerp(min.x, max.x, Mathf.PerlinNoise(Time.time * 0.5f, 0)),
+                Mathf.Lerp(min.y, max.y, Mathf.PerlinNoise(0, Time.time * 0.5f)),
+                0
+            );
+            crosshair.position = Vector3.Lerp(crosshair.position, fallbackTarget, Time.deltaTime * moveSpeed);
+        }
     }
 
-    private void HandleShot(PlayerData p)
+    // ----------------------------------------------------------
+    public void OnShoot(InputAction.CallbackContext context)
     {
-        p.shotsUsed++;
+        Debug.Log("OnShoot déclenché !");
+        if (!context.performed || !isRunning) return;
+        if (shotsUsed >= maxShotsPerRound) return;
 
-        float dist = Vector2.Distance(p.crosshair.position, human.position);
+        shotsUsed++;
+
+        float dist = Vector2.Distance(crosshair.position, human.position);
         int points = CalculateScore(dist);
-        p.score += points;
+        score += points;
 
-        infoText.text = $"J{p.playerID} tire ! +{points}";
-        UpdateScoreDisplay();
+        infoText.text = $"Touché ! +{points}";
+        scoreText.text = $"Score : {score}";
     }
 
+    public void OnSabotage(InputAction.CallbackContext context)
+    {
+        if (!context.performed || !canSabotage) return;
+        StartCoroutine(SabotageRoutine());
+    }
+
+    private IEnumerator SabotageRoutine()
+    {
+        canSabotage = false;
+        isSabotaged = true;
+        infoText.text = "Sabotage !";
+
+        yield return new WaitForSeconds(sabotageDuration);
+
+        isSabotaged = false;
+        infoText.text = "";
+
+        yield return new WaitForSeconds(sabotageCooldown);
+        canSabotage = true;
+    }
+
+    // ----------------------------------------------------------
     private int CalculateScore(float distance)
     {
         if (distance < 0.2f) return 5;
@@ -183,56 +192,14 @@ public class AimMiniGame : MonoBehaviour
         return 0;
     }
 
-    private void UpdateScoreDisplay()
+    private void ResetGame()
     {
-        string result = "";
-        foreach (var p in players)
-            result += $"J{p.playerID}:{p.score}  ";
-        scoreText.text = result;
-    }
-
-    private void ResetAllPlayers()
-    {
-        foreach (var p in players)
-        {
-            p.score = 0;
-            p.shotsUsed = 0;
-            p.isSabotaged = false;
-            p.sabotageTimer = 0;
-        }
-        UpdateScoreDisplay();
-    }
-
-    // ----------------------------------------------------------
-    private void HandleSabotage(PlayerData attacker)
-    {
-        if (attacker.sabotageTimer > 0)
-        {
-            infoText.text = $"J{attacker.playerID} doit attendre ({attacker.sabotageTimer:F1}s)";
-            return;
-        }
-
-        // Liste des cibles possibles (tous sauf soi-même)
-        List<PlayerData> potentialTargets = new List<PlayerData>();
-        foreach (var p in players)
-            if (p != attacker)
-                potentialTargets.Add(p);
-
-        if (potentialTargets.Count == 0) return;
-
-        // Choisit un joueur au hasard
-        PlayerData target = potentialTargets[Random.Range(0, potentialTargets.Count)];
-        StartCoroutine(SabotageRoutine(target));
-
-        infoText.text = $"J{attacker.playerID} perturbe J{target.playerID} !";
-
-        attacker.sabotageTimer = sabotageCooldown; // reset cooldown
-    }
-
-    private IEnumerator SabotageRoutine(PlayerData target)
-    {
-        target.isSabotaged = true;
-        yield return new WaitForSeconds(sabotageDuration);
-        target.isSabotaged = false;
+        currentRound = 1;
+        score = 0;
+        shotsUsed = 0;
+        isSabotaged = false;
+        canSabotage = true;
+        infoText.text = "";
+        scoreText.text = "Score : 0";
     }
 }
