@@ -9,7 +9,6 @@ public class LayEggs : MonoBehaviour
     [SerializeField] private Vector2 whereShouldEggBe = new Vector2(10, 10);
     [SerializeField] private Transform wherePlayerIs;
 
-
     public void LayEggsInput(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)

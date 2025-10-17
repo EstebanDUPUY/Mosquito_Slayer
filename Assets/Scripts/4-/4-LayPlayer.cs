@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class LayPlayer : MonoBehaviour
 {
-    public TextMeshProUGUI idLabel;
-    private int id;
+    [SerializeField] private TextMeshProUGUI idLabel;
+    public int id;
 
     public void SetUp(int id, Sprite sprite)
     {
@@ -13,9 +13,8 @@ public class LayPlayer : MonoBehaviour
         idLabel.text = "Player_" + id;
         GetComponent<SpriteRenderer>().sprite = sprite;
     }
-
     //
-
+    /*
     [SerializeField] private TextMeshProUGUI playerEggScore;
     [SerializeField] private TextMeshProUGUI bestEggScore;
     [SerializeField] private int playerScore;
@@ -25,4 +24,5 @@ public class LayPlayer : MonoBehaviour
         playerEggScore.text = playerScore.ToString() + "Eggs";
         bestEggScore.text = playerScore.ToString() + "Eggs";
     }
+    */
 }
