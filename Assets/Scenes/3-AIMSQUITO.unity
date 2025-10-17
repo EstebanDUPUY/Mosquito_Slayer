@@ -514,7 +514,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &95340382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1732,9 +1732,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AimIntro
   instructionText: {fileID: 348861237}
+  miniGame: {fileID: 95340381}
   displayTime: 5
   introMessage: Visez les zones non couvertes !
-  miniGames: []
 --- !u!1 &1099759717
 GameObject:
   m_ObjectHideFlags: 0

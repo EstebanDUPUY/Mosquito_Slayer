@@ -4,29 +4,25 @@ using System.Collections;
 
 public class AimIntro : MonoBehaviour
 {
+    [Header("Références")]
     public TMP_Text instructionText;
+    public GameObject miniGame; // ton GameLogic
+
+    [Header("Paramètres")]
     public float displayTime = 5f;
-    public string introMessage = "Visez les zones non couvertes !";
-    public GameObject[] miniGames; // 4 mini-jeux à activer
+    [TextArea] public string introMessage = "Visez les zones non couvertes !";
 
     void Start()
     {
-        instructionText.text = introMessage;
-
-        // Tout désactiver avant de commencer
-        foreach (var mg in miniGames)
-            mg.SetActive(false);
-
-        StartCoroutine(LaunchMiniGames());
+        if (instructionText) instructionText.text = introMessage;
+        if (miniGame) miniGame.SetActive(false);
+        StartCoroutine(StartAfterDelay());
     }
 
-    private IEnumerator LaunchMiniGames()
+    private IEnumerator StartAfterDelay()
     {
         yield return new WaitForSeconds(displayTime);
+        if (miniGame) miniGame.SetActive(true);
         gameObject.SetActive(false);
-
-        // Active tous les mini-jeux
-        foreach (var mg in miniGames)
-            mg.SetActive(true);
     }
 }
