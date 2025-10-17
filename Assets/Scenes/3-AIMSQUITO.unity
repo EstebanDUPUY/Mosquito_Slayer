@@ -535,8 +535,8 @@ MonoBehaviour:
   timerText: {fileID: 227396517}
   scoreText: {fileID: 1982001439}
   shotsText: {fileID: 1099759719}
-  moveSpeed: 3
-  moveInterval: 1
+  moveSpeed: 4
+  moveInterval: 1.2
   roundDuration: 15
   totalRounds: 3
   maxShotsPerRound: 3
@@ -549,7 +549,7 @@ MonoBehaviour:
   - {fileID: 104134857}
   - {fileID: 1304416248}
   chanceToGoNearTarget: 0.75
-  offsetAroundTarget: 0
+  offsetAroundTarget: 0.3
 --- !u!4 &95340383
 Transform:
   m_ObjectHideFlags: 0
@@ -1733,7 +1733,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AimIntro
   instructionText: {fileID: 348861237}
   miniGame: {fileID: 95340381}
-  displayTime: 5
+  displayTime: 2
   introMessage: Visez les zones non couvertes !
 --- !u!1 &1099759717
 GameObject:
