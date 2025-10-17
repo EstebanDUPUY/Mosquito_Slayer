@@ -5,10 +5,11 @@ using UnityEngine.InputSystem;
 public class LayLobby : MonoBehaviour
 {
     private PlayerInputManager inputManager;
-    public Sprite[] sprites;
+    [SerializeField] private Sprite[] sprites;
     private void Awake()
     {
-        inputManager = GetComponent<PlayerInputManager>(); 
+        inputManager = GetComponent<PlayerInputManager>();
+        
     }
 
     public void OnPlayerJoined(PlayerInput input)

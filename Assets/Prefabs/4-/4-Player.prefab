@@ -148,7 +148,7 @@ GameObject:
   - component: {fileID: 9187388909974820005}
   - component: {fileID: 4331848298984649946}
   - component: {fileID: 1780397729381589779}
-  - component: {fileID: 8560927910968525501}
+  - component: {fileID: 4009678005341408095}
   - component: {fileID: 5285357418655816481}
   - component: {fileID: 577196346511854636}
   - component: {fileID: 6683480964262321068}
@@ -352,7 +352,7 @@ MonoBehaviour:
   eggCount: 0
   whereShouldEggBe: {x: 1, y: 1}
   wherePlayerIs: {fileID: 7180691447331641084}
---- !u!114 &8560927910968525501
+--- !u!114 &4009678005341408095
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -361,13 +361,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1656442804645059584}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30af0ade3f48d6d44b10b85eb9068158, type: 3}
+  m_Script: {fileID: 11500000, guid: 3d5f5a5d4d6b2ff47b72b46098dff427, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerLay
+  m_EditorClassIdentifier: Assembly-CSharp::LayBoom
+  player: {fileID: 1656442804645059584}
+  bombInQuestion: {fileID: 0}
+  timeLeftBeforeBoom: 3
+  killPlayer: 1
   idLabel: {fileID: 1157968476372278567}
-  playerEggScore: {fileID: 7711275531197662147}
-  bestEggScore: {fileID: 199186554399691622}
-  playerScore: 0
+  id: 0
 --- !u!61 &5285357418655816481
 BoxCollider2D:
   m_ObjectHideFlags: 0
