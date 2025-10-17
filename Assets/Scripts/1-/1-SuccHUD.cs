@@ -46,16 +46,18 @@ public class SuccHUD : MonoBehaviour
         if (winnerText) { winnerText.text = ""; winnerText.gameObject.SetActive(false); }
     }
 
-    public void SetBlood(int i, float ratio01)
+    public void SetBlood(int playerIndex, float ratio01)
     {
-        Debug.Log($"[UI] SetBlood P{i} ratio={ratio01:0.00}");
-        if (bloodBars == null || i < 0 || i >= bloodBars.Length || bloodBars[i] == null) return;
-        if (ratio01 >= 0.999f) Debug.Log($"UI FULL {i}");
-        bloodBars[i].minValue = 0f;
-        bloodBars[i].maxValue = 1f;
-        bloodBars[i].value = Mathf.Clamp01(ratio01);
+        Debug.Log($"[UI] SetBlood P{playerIndex} -> {ratio01:0.00}");
+        if (bloodBars == null || playerIndex < 0 || playerIndex >= bloodBars.Length || bloodBars[playerIndex] == null)
+        {
+            Debug.LogWarning("[UI] bloodBars non assigné ou index hors limites.");
+            return;
+        }
+        bloodBars[playerIndex].minValue = 0f;
+        bloodBars[playerIndex].maxValue = 1f;
+        bloodBars[playerIndex].value = Mathf.Clamp01(ratio01);
     }
-
     public void SetAttention(int i, float a01)
     {
         if (!Ok(attentionIcons, i)) return;

@@ -3,6 +3,7 @@
  * Règles de jeu + pilotage HUD. Les joueurs ne font que l'input et les zones.
 */
 using UnityEngine;
+using System.Collections;
 
 public class SuccManager : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class SuccManager : MonoBehaviour
     // timers
     float tickTimer, attackTimer, elapsed;
     bool roundOver;
+    private Coroutine tickCo;
 
     #endregion
 
@@ -47,59 +49,55 @@ public class SuccManager : MonoBehaviour
 
     void Update()
     {
-        if (roundOver) return;
 
-        float dt = Time.deltaTime;
-        elapsed += dt;
-        tickTimer += dt;
-        attackTimer += dt;
-
-        // ---- SCORE + ATTENTION (toutes les 0.25 s) ----
-        if (tickTimer >= tickInterval)
-        {
-            tickTimer -= tickInterval;
-
-            for (int i = 0; i < players.Length; i++)
-            {
-                var p = players[i];
-                if (p == null || !p.IsAlive) continue;
-
-                // +1 si on tient et qu'on est sur la zone
-                if (p.IsSuccing && p.OnGroundSuck && p.Points < targetScore)
-                {
-                    p.AddPoints(+1);
-                    float ratio = p.Points / (float)targetScore;
-                    hud?.SetBlood(i, ratio);
-                    if (p.Points == targetScore) Debug.Log($"FULL {i} -> {ratio}");
-                    Debug.Log($"[HUD] SetBlood P{i} -> {ratio:0.00}");
-
-                    p.Attention = Mathf.Clamp01(p.Attention + Random.Range(attentionGainMin, attentionGainMax));
-                }
-                else
-                {
-                    // attention décroit
-                    p.Attention = Mathf.Clamp01(p.Attention - attentionDecay * tickInterval);
-                }
-
-                // HUD
-                hud?.SetBlood(i, p.Points / (float)targetScore);
-                hud?.SetAttention(i, p.Attention);
-
-                // Victoire par score
-                if (p.Points >= targetScore) { EndRound(p); return; }
-            }
-        }
-
-        // ---- ATTAQUES (cadence qui accélère) ----
-        float curInterval = Mathf.Lerp(baseAttackInterval, minAttackInterval, Mathf.Clamp01(elapsed / timeToMinAttack));
-        if (attackTimer >= curInterval)
-        {
-            attackTimer = 0f;
-            ResolveAttack();
-        }
     }
 
     #endregion
+
+    void OnDisable()
+    {
+        if (tickCo != null) StopCoroutine(tickCo);
+    }
+
+    IEnumerator TickLoop()
+    {
+        while (!roundOver)
+        {
+            yield return new WaitForSeconds(tickInterval); // stable, pas lié aux FPS
+            ProcessTick(); // on fait 1 tick ici
+        }
+    }
+
+    void ProcessTick()
+    {
+        for (int i = 0; i < players.Length; i++)
+        {
+            var p = players[i];
+            if (p == null || !p.IsAlive) continue;
+
+            if (p.IsSuccing && p.OnGroundSuck && p.Points < targetScore)
+            {
+                p.AddPoints(+1);
+                p.Attention = Mathf.Clamp01(p.Attention + Random.Range(attentionGainMin, attentionGainMax));
+            }
+            else
+            {
+                p.Attention = Mathf.Clamp01(p.Attention - attentionDecay * tickInterval);
+            }
+
+            float ratio = Mathf.InverseLerp(0, p.MaxPoints, p.Points);
+            hud?.SetBlood(i, ratio);
+            hud?.SetAttention(i, p.Attention);
+
+            if (p.Points >= p.MaxPoints)
+            {
+                hud?.SetBlood(i, 1f);
+                EndRound(p);
+                return;
+            }
+        }
+    }
+
 
     //
     #region LOGIQUE
@@ -107,21 +105,25 @@ public class SuccManager : MonoBehaviour
     public void StartRound()
     {
         roundOver = false;
-        elapsed = tickTimer = attackTimer = 0f;
+        elapsed = attackTimer = 0f;
         hud?.ResetAll();
-
-        // init joueurs
         for (int i = 0; i < players.Length; i++)
         {
-            var p = players[i];
-            if (!p) continue;
-            p.Index = i;
-            p.Manager = this;
-            p.ResetState(targetScore);
-            hud?.SetBlood(i, 0f);
-            hud?.SetAttention(i, 0f);
+            var p = players[i]; if (!p) continue;
+            p.Index = i; p.Manager = this; p.ResetState(targetScore);
+            hud?.SetBlood(i, 0f); hud?.SetAttention(i, 0f);
         }
+        if (tickCo != null) StopCoroutine(tickCo);
+        tickCo = StartCoroutine(TickLoop());
     }
+
+    void EndRound(PlayerSucc winner)
+    {
+        roundOver = true;
+        if (tickCo != null) { StopCoroutine(tickCo); tickCo = null; }
+        hud?.ShowWinner(winner.Index);
+    }
+
 
     void ResolveAttack()
     {
@@ -170,12 +172,7 @@ public class SuccManager : MonoBehaviour
             if (players[i] && !players[i].IsAlive) hud?.SetDead(i);
     }
 
-    void EndRound(PlayerSucc winner)
-    {
-        roundOver = true;
-        hud?.ShowWinner(winner.Index);
-        // on pourrait locker ici les inputs si besoin
-    }
+
 
     PlayerSucc SafePlayer(int i) => (i >= 0 && i < players.Length) ? players[i] : null;
 

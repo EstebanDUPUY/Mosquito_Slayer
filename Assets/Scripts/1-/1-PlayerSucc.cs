@@ -67,7 +67,8 @@ public class PlayerSucc : MonoBehaviour
     public void SabotageInput(InputAction.CallbackContext ctx) // option (Q / bouton West)
     {
         if (!IsAlive || !ctx.performed) return;
-        Manager?.OnSabotageAsked(Index);
+        Manager?.OnSabotageAsked(Index); 
+        Debug.Log("Yo");
     }
 
     #endregion
