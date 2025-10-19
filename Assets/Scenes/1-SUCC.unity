@@ -663,8 +663,8 @@ MonoBehaviour:
   baseAttackInterval: 1
   minAttackInterval: 0.7
   timeToMinAttack: 30
-  attentionGainMin: 0.2
-  attentionGainMax: 0.5
+  attentionGainMin: 0.06
+  attentionGainMax: 0.12
   attentionDecay: 0.15
   sabotageCost: 2
   splashDuration: 1
@@ -675,6 +675,7 @@ MonoBehaviour:
   - {fileID: 0}
   hud: {fileID: 624236776}
   human: {fileID: 1134482985}
+  attentionThreshold: 0.15
   minGapAfterAttack: 1
 --- !u!4 &829681952
 Transform:

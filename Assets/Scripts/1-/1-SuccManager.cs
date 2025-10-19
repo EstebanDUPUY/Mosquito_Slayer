@@ -44,8 +44,10 @@ public class SuccManager : MonoBehaviour
     // per-player fractional accumulator for decay
     float[] _decayAcc;
     // --- Planning stochastique des attaques ---
+    [SerializeField] float attentionThreshold = 0.15f; // en-dessous, aucune attaque planifiée
     [SerializeField] float minGapAfterAttack = 0.6f; // gap mini entre deux séquences
     float _nextAttackAt = -1f;                       // horodatage du prochain tirage
+
 
     #endregion
 
@@ -63,17 +65,44 @@ public class SuccManager : MonoBehaviour
 
         elapsed += Time.deltaTime;
 
-        // 1ère planification si besoin
-        if (_nextAttackAt < 0f)
-            ScheduleNextAttack();
+        float att = MaxAttention();
 
-        // lance une attaque quand on atteint l’échéance, puis replanifie
+        // Tant que l'attention max est sous le seuil : pas d'attaque et PAS de planification en attente
+        if (att < attentionThreshold)
+        {
+            _nextAttackAt = -1f; // on désarme : dès que le seuil sera franchi, on replanifiera proprement
+            return;
+        }
+
+        // si rien de planifié → planifie maintenant en tenant compte de l'attention actuelle
+        if (_nextAttackAt < 0f)
+        {
+            ScheduleNextAttack();
+            // Debug.Log($"[SCHED] first plan in {(_nextAttackAt - Time.time):0.00}s (maxAtt={att:0.00})");
+        }
+        else
+        {
+            // si l'attention a fortement augmenté, avance la prochaine attaque (évite les "999s")
+            float suggested = SampleNextAttackDelay(elapsed);         // délai “moyen” actuel
+            float remaining = _nextAttackAt - Time.time;
+
+            // hysteresis : si la date planifiée est beaucoup trop loin par rapport au rythme actuel, on réajuste
+            if (remaining > suggested * 2.0f)
+            {
+                _nextAttackAt = Time.time + suggested;
+                // Debug.Log($"[SCHED] tighten to {suggested:0.00}s (was {remaining:0.00}s), maxAtt={att:0.00}");
+            }
+        }
+
+        // déclenche quand on atteint l'échéance
         if (Time.time >= _nextAttackAt)
         {
             ResolveAttack();
-            ScheduleNextAttack();
+            ScheduleNextAttack(); // replanifie pour la suite (selon attention/temps)
+                                  // Debug.Log($"[SCHED] next in {(_nextAttackAt - Time.time):0.00}s (maxAtt={att:0.00})");
         }
     }
+
 
     #endregion
 
@@ -228,22 +257,36 @@ public class SuccManager : MonoBehaviour
 
     PlayerSucc SafePlayer(int i) => (i >= 0 && i < players.Length) ? players[i] : null;
 
+    float MaxAttention()
+    {
+        float m = 0f;
+        for (int i = 0; i < players.Length; i++)
+            if (players[i] && players[i].IsAlive) m = Mathf.Max(m, players[i].Attention);
+        return m;
+    }
+
+
     float SampleNextAttackDelay(float elapsedSec)
     {
-        // intensité monte avec le temps (comme avant)
-        float intensity01 = Mathf.Clamp01(elapsedSec / timeToMinAttack);
-        // taux (lambda) en 1/sec : interpole entre base et min (mais on reste en taux, donc 1/intervalle)
-        float lambda = Mathf.Lerp(1f / baseAttackInterval, 1f / minAttackInterval, intensity01);
+        // Intensité de base (monte avec le temps, comme avant)
+        float t01 = Mathf.Clamp01(elapsedSec / timeToMinAttack);
+        float lambda = Mathf.Lerp(1f / baseAttackInterval, 1f / minAttackInterval, t01); // 1/sec
 
-        // bruit multiplicatif (jitter) pour casser les patterns
-        float jitter = Random.Range(0.7f, 1.3f);
-        lambda *= jitter;
+        // Modulation par l’attention max (si faible → beaucoup moins d’attaques)
+        float att = MaxAttention(); // 0..1
+                                    // facteur 0.25x → 2.0x (à régler)
+        float attFactor = Mathf.Lerp(0.25f, 2.0f, att);
+        lambda *= attFactor;
 
-        // échantillon expo: délai = -ln(U)/lambda
+        // Jitter pour casser les patterns
+        lambda *= Random.Range(0.8f, 1.25f);
+
+        // Si personne n’attire l’attention, retourne un délai très long
+        if (att < attentionThreshold) return 999f;
+
+        // Délai ~ expo
         float u = Mathf.Clamp01(Random.value);
         float delay = -Mathf.Log(1f - u) / Mathf.Max(0.0001f, lambda);
-
-        // imposer un gap minimal
         return Mathf.Max(minGapAfterAttack, delay);
     }
 
