@@ -92,19 +92,29 @@ public class HumanAttack : MonoBehaviour
 
         if (laser != null && manager != null && targetIndex >= 0 && targetIndex < manager.players.Length)
         {
-            var target = manager.players[targetIndex].transform;
-            float dur = Random.Range(fireTime.x, fireTime.y);   // fenêtre d'attaque
-            laser.FireAt(target, dur);                          // ← appelle ton script unique LaserAttack
+            PlayerSucc tgt = manager.players[targetIndex]; // ou: var tgt = manager.players[targetIndex];
+            if (tgt != null)
+            {
+                float xSnap = tgt.transform.position.x;
+
+                // Si tu as bien la méthode dans LaserAttack :
+                float travel = laser.EstimateTravelTimeFromCurrentStartY();
+
+                laser.FireAtX(xSnap);               // ← un seul appel !
+                yield return new WaitForSeconds(travel + 0.05f);
+            }
+        }
+        else
+        {
+            yield return new WaitForSeconds(Random.Range(fireTime.x, fireTime.y));
         }
 
-        // attendre la fin de la fenêtre d’attaque
-        yield return new WaitForSeconds(Random.Range(fireTime.x, fireTime.y));
+        // sécurité
+        if (laser && laser.Active) laser.StopNow();
 
-        // 5) retour Idle + cooldown (le laser s’éteint seul via StopNow à la fin du FireAt)
         SetState(VisState.Idle);
         yield return StartCooldown();
         IsBusy = false; seqCo = null;
-
     }
 
     IEnumerator StartCooldown()
@@ -125,9 +135,4 @@ public class HumanAttack : MonoBehaviour
         if (alertImage) alertImage.SetActive(st == VisState.Alert);
         if (attackImage) attackImage.SetActive(st == VisState.Attack);
     }
-
-    // Raccourcis si tu veux garder tes anciennes méthodes
-    void SetIdle() => SetState(VisState.Idle);
-    void SetAlert() => SetState(VisState.Alert);
-    void SetAttack() => SetState(VisState.Attack);
 }

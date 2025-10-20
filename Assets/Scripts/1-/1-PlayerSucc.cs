@@ -158,9 +158,6 @@ public class PlayerSucc : MonoBehaviour
         if (other.CompareTag("DeathZone"))
         {
             InDeathZone = false;
-            IsSuccing = false;                 // on “lâche” en esquivant (option)
-            iFrameUntil = Time.time + iFrameDuration; // courte invincibilité
-            if (dodgeCo != null) { StopCoroutine(dodgeCo); dodgeCo = null; }
         }
     }
 

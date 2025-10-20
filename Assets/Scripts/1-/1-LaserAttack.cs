@@ -1,76 +1,113 @@
-using UnityEngine;
-using System.Collections;
+﻿using UnityEngine;
 
 public class LaserAttack : MonoBehaviour
 {
-    [Header("R�fs")]
-    public SuccManager manager;            // GameManager
-    [SerializeField] Transform ground;     // Transform de ta GroundSuck (ou un empty � la bonne hauteur)
-    [SerializeField] Transform origin;     // optionnel (t�te/main). Si null => ce GO
+    [Header("Refs")]
+    public SuccManager manager;
+    [SerializeField] Transform ground;   // Transform du GroundSuck (Y de référence)
+    [SerializeField] Transform origin;   // optionnel: point de départ visuel
 
-    [Header("Mouvement")]
-    [SerializeField] float fallSpeed = 10f;
+    [Header("Move")]
+    [SerializeField] float fallSpeed = 12f;
     [SerializeField] float startYOffset = 0f;
+    [SerializeField] float startXOffset = 0f;
     [SerializeField] float stopAboveGround = 0.05f;
 
-    bool active;
-    float stopY;
-    Coroutine co;
+    public bool Active { get; private set; }
 
-    /// <summary>
-    /// Lancer une attaque : le laser se place au X de la cible et tombe pendant 'attackDuration'.
-    /// </summary>
-    public void FireAt(Transform target, float attackDuration)
+    float _stopY;
+    float _lockedX;
+    Rigidbody2D _rb;
+
+    void Awake()
     {
-        if (co != null) StopCoroutine(co);
+        _rb = GetComponent<Rigidbody2D>();
+        if (_rb)
+        {
+            _rb.bodyType = RigidbodyType2D.Kinematic;
+            _rb.linearVelocity = Vector2.zero;
+            _rb.angularVelocity = 0f;
+            _rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+        }
+    }
+
+    public void FireAtX(float xSnapshot)
+    {
+        if (Active) return;
+
+        transform.SetParent(null, true);
+
+        _lockedX = xSnapshot + startXOffset;   // ← applique l’offset une seule fois
 
         float startY = (origin ? origin.position.y : transform.position.y) + startYOffset;
-        stopY = ground ? ground.position.y + stopAboveGround : startY - 5f;
+        _stopY = ground ? ground.position.y + stopAboveGround : startY - 5f;
 
-        float x = target ? target.position.x : transform.position.x;
-        transform.position = new Vector3(x, startY, transform.position.z);
+        transform.position = new Vector3(_lockedX, startY, transform.position.z);
+
+        if (_rb)
+        {
+            _rb.bodyType = RigidbodyType2D.Kinematic;
+            _rb.linearVelocity = Vector2.zero;
+            _rb.angularVelocity = 0f;
+            _rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+        }
 
         gameObject.SetActive(true);
-        active = true;
-        co = StartCoroutine(MoveAndAutoStop(attackDuration));
+        Active = true;
     }
+
 
     public void StopNow()
     {
-        active = false;
-        if (co != null) { StopCoroutine(co); co = null; }
+        Active = false;
+        if (_rb) { _rb.linearVelocity = Vector2.zero; _rb.angularVelocity = 0f; }
         gameObject.SetActive(false);
     }
 
-    IEnumerator MoveAndAutoStop(float dur)
+    void Update()
     {
-        float t = 0f;
-        while (active && t < dur)
-        {
-            t += Time.deltaTime;
+        if (!Active) return;
 
-            var p = transform.position;
-            float ny = Mathf.MoveTowards(p.y, stopY, fallSpeed * Time.deltaTime);
-            transform.position = new Vector3(p.x, ny, p.z);
+        var p = transform.position;
+        float ny = Mathf.MoveTowards(p.y, _stopY, fallSpeed * Time.deltaTime);
 
-            if (Mathf.Abs(ny - stopY) <= 0.001f) break; // atteint le sol
-            yield return null;
-        }
-        StopNow();
+        // ⬇️  IMPORTANT : on impose X = _lockedX ici (pas le X courant)
+        transform.position = new Vector3(_lockedX, ny, p.z);
+
+        if (Mathf.Abs(ny - _stopY) <= 0.0001f)
+            StopNow();
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+
+    void LateUpdate()
     {
-        if (!active) return;
+        if (!Active) return;
+        // 🔐 verrou monde : si quelqu’un a modifié X après Update, on le ré-impose ici
+        var p = transform.position;
+        transform.position = new Vector3(_lockedX, p.y, p.z);
+    }
 
-        var player = other.GetComponent<PlayerSucc>();
-        if (player == null) return;
+    void OnTriggerEnter2D(Collider2D o) { TryHit(o); }
+    void OnTriggerStay2D(Collider2D o) { TryHit(o); }
 
-        // il perd seulement s�il est en train de sucer
-        if (player.IsSuccing && manager != null)
+    void TryHit(Collider2D other)
+    {
+        if (!Active) return;
+        var p = other.GetComponent<PlayerSucc>();
+        if (p == null || manager == null) return;
+
+        if (p.IsSuccing)
         {
-            manager.OnLaserHit(player); // g�re mort + defeat panel + dernier survivant
+            manager.OnLaserHit(p);
             StopNow();
         }
+    }
+
+    public float EstimateTravelTimeFromCurrentStartY()
+    {
+        float startY = (origin ? origin.position.y : transform.position.y) + startYOffset;
+        float stopY = ground ? ground.position.y + stopAboveGround : startY - 5f;
+        float dist = Mathf.Max(0f, startY - stopY);
+        return dist / Mathf.Max(0.01f, fallSpeed);
     }
 }
