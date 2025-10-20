@@ -491,7 +491,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!224 &624236775
 RectTransform:
@@ -528,14 +528,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SuccHUD
   bloodBars:
   - {fileID: 529203117}
-  attentionIcons:
-  - {fileID: 1913699737}
+  attentionIcons: []
   deadCross: []
   splashMask:
   - {fileID: 1913699737}
   splashFadeOut: 0.8
-  attackWarning: {fileID: 665507522}
-  warningDuration: 0.3
   winnerText: {fileID: 0}
 --- !u!1 &665507522
 GameObject:
@@ -670,9 +667,6 @@ MonoBehaviour:
   splashDuration: 1
   players:
   - {fileID: 1326284775}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   hud: {fileID: 624236776}
   human: {fileID: 1134482985}
   attentionThreshold: 0.15
@@ -822,10 +816,10 @@ MonoBehaviour:
   idleImage: {fileID: 1365420373}
   alertImage: {fileID: 2057620070}
   attackImage: {fileID: 665507522}
-  preAlertWait: {x: 0.15, y: 0.6}
-  alertTime: {x: 0.35, y: 1.1}
+  preAlertWait: {x: 0.15, y: 0.35}
+  alertTime: {x: 0.35, y: 0.9}
   fireTime: {x: 0.15, y: 0.35}
-  cooldownTime: {x: 0.4, y: 0.9}
+  cooldownTime: {x: 0.4, y: 0.5}
   feintChance: 0
   manager: {fileID: 829681951}
 --- !u!1 &1202815454
@@ -1207,8 +1201,9 @@ MonoBehaviour:
   IsAlive: 1
   IsSuccing: 0
   OnGroundSuck: 1
-  InDeathZone: 0
+  InDeathZone: 1
   iFrameDuration: 0.25
+  sabotageCooldown: 2.5
 --- !u!1 &1342477223
 GameObject:
   m_ObjectHideFlags: 0
@@ -1301,7 +1296,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1365420374
 Transform:
   m_ObjectHideFlags: 0
@@ -1693,7 +1688,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1913699736
 RectTransform:
   m_ObjectHideFlags: 0

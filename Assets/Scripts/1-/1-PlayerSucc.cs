@@ -1,5 +1,4 @@
 ﻿/*
- * PlayerSucc.cs (version simple & lisible)
  * Ne fait que l'input, les zones, et expose son état. Le manager fait tout le reste.
 */
 using UnityEngine;
@@ -26,6 +25,9 @@ public class PlayerSucc : MonoBehaviour
     // dodge i-frames
     [SerializeField] float iFrameDuration = 0.25f;
     float iFrameUntil = 0f;
+    [SerializeField] float sabotageCooldown = 2f; // secondes
+    float sabotageReadyAt = 0f;
+    public bool CanSabotage => Time.time >= sabotageReadyAt;
 
     #endregion
 
@@ -41,6 +43,9 @@ public class PlayerSucc : MonoBehaviour
         var suck = _pi.actions["Suck"];
         suck.started += SuccInput;
         suck.canceled += SuccInput;
+
+        var sab = _pi.actions["BlindEnemies"];
+        sab.performed += SabotageInput;
     }
 
     #endregion
@@ -51,6 +56,9 @@ public class PlayerSucc : MonoBehaviour
         var suck = _pi.actions["Suck"];
         suck.started -= SuccInput;
         suck.canceled -= SuccInput;
+
+        var sab = _pi.actions["BlindEnemies"];
+        sab.performed -= SabotageInput;     // ← pense à te désabonner aussi
     }
 
     //
@@ -67,8 +75,18 @@ public class PlayerSucc : MonoBehaviour
     public void SabotageInput(InputAction.CallbackContext ctx) // option (Q / bouton West)
     {
         if (!IsAlive || !ctx.performed) return;
+
+        if (!CanSabotage)
+        {
+            // feedback console (optionnel)
+            Debug.Log($"[SABO] P{Index} cooldown {sabotageReadyAt - Time.time:0.00}s");
+            return;
+        }
         Manager?.OnSabotageAsked(Index); 
         Debug.Log("Yo");
+
+        // démarre le CD uniquement si on a vraiment tenté (évite le spam)
+        sabotageReadyAt = Time.time + sabotageCooldown;
     }
 
     #endregion
@@ -80,6 +98,7 @@ public class PlayerSucc : MonoBehaviour
     {
         IsAlive = true; IsSuccing = false; OnGroundSuck = true; InDeathZone = false;
         Points = 0; Attention = 0f; MaxPoints = targetScore; iFrameUntil = 0f;
+        sabotageReadyAt = 0f;
     }
 
     public void AddPoints(int delta)

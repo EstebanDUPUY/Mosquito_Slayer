@@ -1,8 +1,4 @@
-﻿/* 
- * SuccManager.cs (version simple & lisible)
- * Règles de jeu + pilotage HUD. Les joueurs ne font que l'input et les zones.
-*/
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class SuccManager : MonoBehaviour
@@ -203,44 +199,80 @@ public class SuccManager : MonoBehaviour
 
     public void ResolveAttack()
     {
-        // cible = joueur vivant avec la + grande attention
+        // … choisis target (comme tu le fais déjà)
         int target = -1; float best = -1f;
         for (int i = 0; i < players.Length; i++)
         {
             var p = players[i]; if (p == null || !p.IsAlive) continue;
             if (p.Attention > best) { best = p.Attention; target = i; }
         }
-        if (human != null)
+        if (target < 0) return;
+
+        // <<< NE déclenche que si l'humain est prêt
+        if (human != null && !human.IsBusy && !human.Cooldown)
+            human.PlayAttackSequence(target);
+        else if (human == null)
         {
-            hud?.ShowAttackWarning(target);  // si tu veux garder le petit warning
-            human.PlayAttackSequence(target); // <<< lance la séquence Idle->Alert->Attack
-        }
-        else
-        {
-            // fallback : ancienne logique directe
-            hud?.ShowAttackWarning(target);
+            // fallback direct si tu n'utilises pas l'humain visuel
             players[target].TryKillFromAttack();
             CheckLastAlive();
         }
     }
 
+
     public void OnSabotageAsked(int attackerIndex)
     {
         var a = SafePlayer(attackerIndex);
-        if (a == null || a.Points < sabotageCost) return;
+        if (a == null) { Debug.Log("[SABO] attacker null"); return; }
 
-        // choisir cible vivante ≠ attaquant
-        int tries = 12, tIdx = -1;
-        while (tries-- > 0)
+        if (a.Points < sabotageCost)
         {
-            int r = Random.Range(0, players.Length);
-            if (r != attackerIndex && SafePlayer(r)?.IsAlive == true) { tIdx = r; break; }
+            Debug.Log("[SABO] not enough points");
+            return;
         }
-        if (tIdx < 0) return;
 
+        // --- Cherche une cible vivante ≠ attaquant ---
+        int tIdx = -1;
+
+        // 1) vivant ≠ attaquant (aléatoire)
+        {
+            System.Collections.Generic.List<int> cand = new System.Collections.Generic.List<int>();
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (i == attackerIndex) continue;
+                var p = SafePlayer(i);
+                if (p != null && p.IsAlive) cand.Add(i);
+            }
+            if (cand.Count > 0) tIdx = cand[Random.Range(0, cand.Count)];
+        }
+
+        // 2) fallback : n'importe quel vivant
+        if (tIdx < 0)
+        {
+            for (int i = 0; i < players.Length; i++)
+            {
+                var p = SafePlayer(i);
+                if (p != null && p.IsAlive) { tIdx = i; break; }
+            }
+        }
+
+        // 3) dernier fallback : self-blind (au moins feedback visuel)
+        if (tIdx < 0) tIdx = attackerIndex;
+
+        // --- Débite & HUD ---
         a.AddPoints(-sabotageCost);
-        hud?.ShowBloodSplash(tIdx, splashDuration);
-        hud?.SetBlood(attackerIndex, a.Points / (float)targetScore);
+        hud?.SetBlood(attackerIndex, Mathf.InverseLerp(0, a.MaxPoints, a.Points));
+
+        if (hud != null && hud.splashMask != null &&
+            tIdx >= 0 && tIdx < hud.splashMask.Length && hud.splashMask[tIdx] != null)
+        {
+            Debug.Log($"[SABO] splash -> P{tIdx} ({splashDuration}s)");
+            hud.ShowBloodSplash(tIdx, splashDuration);
+        }
+        else
+        {
+            Debug.LogWarning("[SABO] splashMask non assigné / index hors limites");
+        }
     }
 
     void CheckLastAlive()

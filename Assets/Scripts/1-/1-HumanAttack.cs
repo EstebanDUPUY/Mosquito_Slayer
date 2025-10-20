@@ -3,6 +3,9 @@ using System.Collections;
 
 public class HumanAttack : MonoBehaviour
 {
+    // Petit FSM pour garantir un seul état visuel à la fois
+    private enum VisState { Idle, Alert, Attack }
+
     [Header("Images")]
     [SerializeField] GameObject idleImage;
     [SerializeField] GameObject alertImage;
@@ -18,60 +21,92 @@ public class HumanAttack : MonoBehaviour
     [Header("Gameplay (option)")]
     [SerializeField] SuccManager manager;
 
-    bool onCooldown;
+    // Garde-fous anti chevauchement
+    public bool IsBusy { get; private set; } // séquence en cours
+    public bool Cooldown { get; private set; } // en récupération
+    private int _seqToken = 0;                 // jeton pour invalider proprement une ancienne séquence
+
     Coroutine seqCo;
 
     void Start()
     {
-        SetIdle();
+        SetState(VisState.Idle);
         if (!manager) manager = FindObjectOfType<SuccManager>();
     }
 
     public void PlayAttackSequence(int targetIndex)
     {
-        if (onCooldown) return;                 // protège d’une rafale
+        // protège d’une rafale et empêche le chevauchement des états
+        if (IsBusy || Cooldown) return;
+
+        // démarrer une nouvelle séquence annule implicitement l’ancienne via un nouveau token
+        _seqToken++;
         if (seqCo != null) StopCoroutine(seqCo);
-        seqCo = StartCoroutine(Sequence(targetIndex));
+        seqCo = StartCoroutine(Sequence(_seqToken, targetIndex));
     }
 
-    IEnumerator Sequence(int targetIndex)
+    IEnumerator Sequence(int token, int targetIndex)
     {
+        IsBusy = true;
+
         // petit pré-délai random pour casser le rythme
         yield return new WaitForSeconds(Random.Range(preAlertWait.x, preAlertWait.y));
+        if (!IsCurrent(token)) yield break; // annulé pendant l’attente
 
         // ALERTE
-        SetAlert();
+        SetState(VisState.Alert);
         yield return new WaitForSeconds(Random.Range(alertTime.x, alertTime.y));
+        if (!IsCurrent(token)) yield break;
 
         // FEINTE ?
         if (Random.value < feintChance)
         {
-            SetIdle();
+            SetState(VisState.Idle);
             yield return StartCooldown();
+            IsBusy = false; seqCo = null;
             yield break;
         }
 
         // ATTAQUE
-        SetAttack();
+        SetState(VisState.Attack);
         yield return new WaitForSeconds(Random.Range(fireTime.x, fireTime.y));
-
-        // Résolution (le manager vérifiera si le joueur meurt réellement)
-        if (manager && targetIndex >= 0 && targetIndex < manager.players.Length && manager.players[targetIndex])
+        if (IsCurrent(token) && manager && targetIndex >= 0 && targetIndex < manager.players.Length && manager.players[targetIndex])
+        {
+            // Résolution (le manager vérifiera si le joueur meurt réellement)
             manager.players[targetIndex].TryKillFromAttack();
+        }
 
-        SetIdle();
+        // retour Idle
+        SetState(VisState.Idle);
+
+        // CD après séquence
         yield return StartCooldown();
+
+        IsBusy = false;
         seqCo = null;
     }
 
     IEnumerator StartCooldown()
     {
-        onCooldown = true;
+        Cooldown = true;
         yield return new WaitForSeconds(Random.Range(cooldownTime.x, cooldownTime.y));
-        onCooldown = false;
+        Cooldown = false;
     }
 
-    void SetIdle() { if (idleImage) idleImage.SetActive(true); if (alertImage) alertImage.SetActive(false); if (attackImage) attackImage.SetActive(false); }
-    void SetAlert() { if (idleImage) idleImage.SetActive(false); if (alertImage) alertImage.SetActive(true); if (attackImage) attackImage.SetActive(false); }
-    void SetAttack() { if (idleImage) idleImage.SetActive(false); if (alertImage) alertImage.SetActive(false); if (attackImage) attackImage.SetActive(true); }
+    // ————— Helpers —————
+
+    bool IsCurrent(int token) => token == _seqToken;
+
+    void SetState(VisState st)
+    {
+        // Exclusivité : une seule image active à la fois
+        if (idleImage) idleImage.SetActive(st == VisState.Idle);
+        if (alertImage) alertImage.SetActive(st == VisState.Alert);
+        if (attackImage) attackImage.SetActive(st == VisState.Attack);
+    }
+
+    // Raccourcis si tu veux garder tes anciennes méthodes
+    void SetIdle() => SetState(VisState.Idle);
+    void SetAlert() => SetState(VisState.Alert);
+    void SetAttack() => SetState(VisState.Attack);
 }

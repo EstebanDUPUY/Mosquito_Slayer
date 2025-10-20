@@ -1,7 +1,3 @@
-/*
- * SuccHUD.cs (version simple & lisible)
- * Affichage uniquement : jauge, attention (alpha), mort, warning, splash, vainqueur.
-*/
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -24,10 +20,6 @@ public class SuccHUD : MonoBehaviour
     public Image[] splashMask;
     [SerializeField] float splashFadeOut = 0.3f;
 
-    [Header("Avertissement d'attaque")]
-    public GameObject attackWarning;
-    [SerializeField] float warningDuration = 0.25f;
-
     [Header("Vainqueur")]
     public Text winnerText;
 
@@ -38,26 +30,30 @@ public class SuccHUD : MonoBehaviour
 
     public void ResetAll()
     {
-        if (bloodBars != null) foreach (var s in bloodBars) if (s) { s.minValue = 0f; s.maxValue = 1f; s.value = 0f; }
-        if (attentionIcons != null) foreach (var a in attentionIcons) if (a) { var c = a.color; c.a = 0f; a.color = c; }
-        if (deadCross != null) foreach (var d in deadCross) if (d) d.SetActive(false);
-        if (splashMask != null) foreach (var m in splashMask) if (m) m.gameObject.SetActive(false);
-        if (attackWarning) attackWarning.SetActive(false);
+        if (bloodBars != null)
+            foreach (var s in bloodBars) if (s) { s.minValue = 0f; s.maxValue = 1f; s.value = 0f; }
+
+        if (attentionIcons != null)
+            foreach (var a in attentionIcons) if (a) { var c = a.color; c.a = 0f; a.color = c; }
+
+        if (deadCross != null)
+            foreach (var d in deadCross) if (d) d.SetActive(false);
+
+        if (splashMask != null)
+            foreach (var m in splashMask) if (m) m.gameObject.SetActive(false);
+
         if (winnerText) { winnerText.text = ""; winnerText.gameObject.SetActive(false); }
     }
 
     public void SetBlood(int playerIndex, float ratio01)
     {
-        Debug.Log($"[UI] SetBlood P{playerIndex} -> {ratio01:0.00}");
-        if (bloodBars == null || playerIndex < 0 || playerIndex >= bloodBars.Length || bloodBars[playerIndex] == null)
-        {
-            Debug.LogWarning("[UI] bloodBars non assigné ou index hors limites.");
-            return;
-        }
+        // Debug.Log($"[UI] SetBlood P{playerIndex} -> {ratio01:0.00}");
+        if (!Ok(bloodBars, playerIndex)) { Debug.LogWarning("[UI] bloodBars non assigné ou index hors limites."); return; }
         bloodBars[playerIndex].minValue = 0f;
         bloodBars[playerIndex].maxValue = 1f;
         bloodBars[playerIndex].value = Mathf.Clamp01(ratio01);
     }
+
     public void SetAttention(int i, float a01)
     {
         if (!Ok(attentionIcons, i)) return;
@@ -71,17 +67,10 @@ public class SuccHUD : MonoBehaviour
         deadCross[i].SetActive(true);
     }
 
-    public void ShowAttackWarning(int _)
-    {
-        if (!attackWarning) return;
-        attackWarning.SetActive(true);
-        StopAllCoroutines();
-        StartCoroutine(HideWarning());
-    }
-
     public void ShowBloodSplash(int i, float hold)
     {
-        if (!Ok(splashMask, i)) return;
+        if (!Ok(splashMask, i)) { Debug.LogWarning($"[UI] splashMask[{i}] manquant"); return; }
+        Debug.Log($"[UI] ShowBloodSplash P{i} ({hold}s)");
         var img = splashMask[i];
         StopAllCoroutines();
         StartCoroutine(Splash(img, hold));
@@ -98,12 +87,6 @@ public class SuccHUD : MonoBehaviour
 
     //
     #region COROUTINES & UTILS
-
-    IEnumerator HideWarning()
-    {
-        yield return new WaitForSeconds(warningDuration);
-        if (attackWarning) attackWarning.SetActive(false);
-    }
 
     IEnumerator Splash(Image img, float hold)
     {
