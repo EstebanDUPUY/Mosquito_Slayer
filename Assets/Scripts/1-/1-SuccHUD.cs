@@ -20,9 +20,14 @@ public class SuccHUD : MonoBehaviour
     public Image[] splashMask;
     [SerializeField] float splashFadeOut = 0.3f;
 
-    [Header("Vainqueur")]
-    public Text winnerText;
+    [SerializeField] GameObject winnerPanel;   // <- assigne ton panel ici
+    [SerializeField] Text winnerText;          // <- texte dans le panel
+    [SerializeField] bool autoWinFromFill = true; // déclenche si une barre atteint 1.0
 
+    public GameObject[] defeatPanels;   // un panel par joueur
+
+    // état interne
+    bool victoryShown = false;
     #endregion
 
     //
@@ -30,6 +35,8 @@ public class SuccHUD : MonoBehaviour
 
     public void ResetAll()
     {
+        victoryShown = false;
+
         if (bloodBars != null)
             foreach (var s in bloodBars) if (s) { s.minValue = 0f; s.maxValue = 1f; s.value = 0f; }
 
@@ -42,16 +49,29 @@ public class SuccHUD : MonoBehaviour
         if (splashMask != null)
             foreach (var m in splashMask) if (m) m.gameObject.SetActive(false);
 
-        if (winnerText) { winnerText.text = ""; winnerText.gameObject.SetActive(false); }
+        if (winnerPanel) winnerPanel.SetActive(false);
+        if (winnerText) { winnerText.text = ""; if (winnerText.gameObject != winnerPanel) winnerText.gameObject.SetActive(false); }
+        if (defeatPanels != null)
+            foreach (var d in defeatPanels) if (d) d.SetActive(false);
+
     }
 
     public void SetBlood(int playerIndex, float ratio01)
     {
         // Debug.Log($"[UI] SetBlood P{playerIndex} -> {ratio01:0.00}");
         if (!Ok(bloodBars, playerIndex)) { Debug.LogWarning("[UI] bloodBars non assigné ou index hors limites."); return; }
-        bloodBars[playerIndex].minValue = 0f;
-        bloodBars[playerIndex].maxValue = 1f;
-        bloodBars[playerIndex].value = Mathf.Clamp01(ratio01);
+
+        Slider s = bloodBars[playerIndex];
+
+        s.minValue = 0f;
+        s.maxValue = 1f;
+        s.value = Mathf.Clamp01(ratio01);
+
+        // Option : si la barre est pleine, afficher la win (utile même si le Manager tarde)
+        if (autoWinFromFill && !victoryShown && s.value >= 1f - 0.0001f)
+        {
+            ShowWinner(playerIndex);
+        }
     }
 
     public void SetAttention(int i, float a01)
@@ -78,9 +98,17 @@ public class SuccHUD : MonoBehaviour
 
     public void ShowWinner(int i)
     {
-        if (!winnerText) return;
-        winnerText.text = $"Joueur {i + 1} gagne !";
-        winnerText.gameObject.SetActive(true);
+        if (victoryShown) return;
+        victoryShown = true;
+
+        if (winnerText) { winnerText.text = $"Joueur {i + 1} gagne !"; winnerText.gameObject.SetActive(true); }
+        if (winnerPanel) winnerPanel.SetActive(true);
+    }
+
+    public void ShowDefeat(int i)
+    {
+        if (!Ok(defeatPanels, i)) return;
+        defeatPanels[i].SetActive(true);
     }
 
     #endregion

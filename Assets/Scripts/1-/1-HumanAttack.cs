@@ -28,10 +28,15 @@ public class HumanAttack : MonoBehaviour
 
     Coroutine seqCo;
 
+    [SerializeField] LaserAttack laser;  // glisse ton GO LaserAttack
+
+
     void Start()
     {
         SetState(VisState.Idle);
         if (!manager) manager = FindObjectOfType<SuccManager>();
+        if (laser) laser.gameObject.SetActive(false);
+
     }
 
     public void PlayAttackSequence(int targetIndex)
@@ -69,21 +74,25 @@ public class HumanAttack : MonoBehaviour
 
         // ATTAQUE
         SetState(VisState.Attack);
-        yield return new WaitForSeconds(Random.Range(fireTime.x, fireTime.y));
-        if (IsCurrent(token) && manager && targetIndex >= 0 && targetIndex < manager.players.Length && manager.players[targetIndex])
+
+        // démarrer le laser vers la cible
+        if (laser && manager && targetIndex >= 0 && targetIndex < manager.players.Length && manager.players[targetIndex])
         {
-            // Résolution (le manager vérifiera si le joueur meurt réellement)
-            manager.players[targetIndex].TryKillFromAttack();
+            laser.FireAt(manager.players[targetIndex].transform);
         }
 
-        // retour Idle
+        yield return new WaitForSeconds(Random.Range(fireTime.x, fireTime.y));
+
+        // arrêter le laser
+        if (laser) laser.StopLaser();
+
+        // (on ne tue plus ici, c’est le laser qui s’en charge via OnTriggerEnter2D)
+        // retour Idle + cooldown
         SetState(VisState.Idle);
-
-        // CD après séquence
         yield return StartCooldown();
-
         IsBusy = false;
         seqCo = null;
+
     }
 
     IEnumerator StartCooldown()

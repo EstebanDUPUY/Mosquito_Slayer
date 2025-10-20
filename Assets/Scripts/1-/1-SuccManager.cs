@@ -327,5 +327,29 @@ public class SuccManager : MonoBehaviour
         _nextAttackAt = Time.time + SampleNextAttackDelay(elapsed);
     }
 
+    public void OnLaserHit(PlayerSucc p)
+    {
+        if (roundOver || p == null) return;
+
+        // règle demandée : il meurt SEULEMENT s’il est en train de sucer
+        if (!p.IsAlive) return;
+
+        if (p.IsSuccing)
+        {
+            // mort + defeat
+            p.IsAlive = false;
+            p.IsSuccing = false;
+
+            // HUD
+            hud?.SetDead(p.Index);
+            hud?.ShowDefeat(p.Index);
+
+            // si tu as une logique de dernier survivant :
+            CheckLastAlive();
+        }
+        // sinon : il a esquivé (pas de sanction)
+    }
+
+
     #endregion
 }
