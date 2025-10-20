@@ -58,10 +58,6 @@ public class HumanAttack : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(preAlertWait.x, preAlertWait.y));
         if (!IsCurrent(token)) yield break; // annulé pendant l’attente
 
-        // ALERTE
-        SetState(VisState.Alert);
-        yield return new WaitForSeconds(Random.Range(alertTime.x, alertTime.y));
-        if (!IsCurrent(token)) yield break;
 
         // FEINTE ?
         if (Random.value < feintChance)
@@ -72,26 +68,42 @@ public class HumanAttack : MonoBehaviour
             yield break;
         }
 
-        // ATTAQUE
-        SetState(VisState.Attack);
+        SetState(VisState.Idle);
 
-        // démarrer le laser vers la cible
-        if (laser && manager && targetIndex >= 0 && targetIndex < manager.players.Length && manager.players[targetIndex])
+        // 1) petit délai avant de montrer l'alerte
+        yield return new WaitForSeconds(Random.Range(preAlertWait.x, preAlertWait.y));
+
+        // 2) ALERTE (montre "Human will attack")
+        SetState(VisState.Alert);
+        float alertDur = Random.Range(alertTime.x, alertTime.y);
+        yield return new WaitForSeconds(alertDur);
+
+        // 3) (facultatif) feinte : revenir Idle sans attaquer
+        if (Random.value < feintChance)
         {
-            laser.FireAt(manager.players[targetIndex].transform);
+            SetState(VisState.Idle);
+            yield return StartCooldown();
+            IsBusy = false; seqCo = null;
+            yield break;
         }
 
+        // 4) ATTAQUE (montre image Attack) + laser qui tombe tout droit
+        SetState(VisState.Attack);
+
+        if (laser != null && manager != null && targetIndex >= 0 && targetIndex < manager.players.Length)
+        {
+            var target = manager.players[targetIndex].transform;
+            float dur = Random.Range(fireTime.x, fireTime.y);   // fenêtre d'attaque
+            laser.FireAt(target, dur);                          // ← appelle ton script unique LaserAttack
+        }
+
+        // attendre la fin de la fenêtre d’attaque
         yield return new WaitForSeconds(Random.Range(fireTime.x, fireTime.y));
 
-        // arrêter le laser
-        if (laser) laser.StopLaser();
-
-        // (on ne tue plus ici, c’est le laser qui s’en charge via OnTriggerEnter2D)
-        // retour Idle + cooldown
+        // 5) retour Idle + cooldown (le laser s’éteint seul via StopNow à la fin du FireAt)
         SetState(VisState.Idle);
         yield return StartCooldown();
-        IsBusy = false;
-        seqCo = null;
+        IsBusy = false; seqCo = null;
 
     }
 

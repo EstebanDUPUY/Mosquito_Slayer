@@ -1,42 +1,76 @@
 using UnityEngine;
+using System.Collections;
 
 public class LaserAttack : MonoBehaviour
 {
-    [SerializeField] float speed = 8f;
-    public SuccManager manager;
+    [Header("Réfs")]
+    public SuccManager manager;            // GameManager
+    [SerializeField] Transform ground;     // Transform de ta GroundSuck (ou un empty à la bonne hauteur)
+    [SerializeField] Transform origin;     // optionnel (tête/main). Si null => ce GO
 
-    Transform _target;
-    bool _active;
+    [Header("Mouvement")]
+    [SerializeField] float fallSpeed = 10f;
+    [SerializeField] float startYOffset = 0f;
+    [SerializeField] float stopAboveGround = 0.05f;
 
-    public void FireAt(Transform target)
+    bool active;
+    float stopY;
+    Coroutine co;
+
+    /// <summary>
+    /// Lancer une attaque : le laser se place au X de la cible et tombe pendant 'attackDuration'.
+    /// </summary>
+    public void FireAt(Transform target, float attackDuration)
     {
-        _target = target;
-        _active = true;
+        if (co != null) StopCoroutine(co);
+
+        float startY = (origin ? origin.position.y : transform.position.y) + startYOffset;
+        stopY = ground ? ground.position.y + stopAboveGround : startY - 5f;
+
+        float x = target ? target.position.x : transform.position.x;
+        transform.position = new Vector3(x, startY, transform.position.z);
+
         gameObject.SetActive(true);
+        active = true;
+        co = StartCoroutine(MoveAndAutoStop(attackDuration));
     }
 
-    public void StopLaser()
+    public void StopNow()
     {
-        _active = false;
+        active = false;
+        if (co != null) { StopCoroutine(co); co = null; }
         gameObject.SetActive(false);
-        _target = null;
     }
 
-    void Update()
+    IEnumerator MoveAndAutoStop(float dur)
     {
-        if (!_active || _target == null) return;
-        transform.position = Vector3.MoveTowards(transform.position, _target.position, speed * Time.deltaTime);
+        float t = 0f;
+        while (active && t < dur)
+        {
+            t += Time.deltaTime;
+
+            var p = transform.position;
+            float ny = Mathf.MoveTowards(p.y, stopY, fallSpeed * Time.deltaTime);
+            transform.position = new Vector3(p.x, ny, p.z);
+
+            if (Mathf.Abs(ny - stopY) <= 0.001f) break; // atteint le sol
+            yield return null;
+        }
+        StopNow();
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!_active) return;
+        if (!active) return;
 
-        // si on touche un PlayerSucc, on délègue au manager
-        var p = other.GetComponent<PlayerSucc>();
-        if (p != null && manager != null)
+        var player = other.GetComponent<PlayerSucc>();
+        if (player == null) return;
+
+        // il perd seulement s’il est en train de sucer
+        if (player.IsSuccing && manager != null)
         {
-            manager.OnLaserHit(p);
+            manager.OnLaserHit(player); // gère mort + defeat panel + dernier survivant
+            StopNow();
         }
     }
 }

@@ -3,6 +3,7 @@
 */
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class PlayerSucc : MonoBehaviour
 {
@@ -29,6 +30,22 @@ public class PlayerSucc : MonoBehaviour
     float sabotageReadyAt = 0f;
     public bool CanSabotage => Time.time >= sabotageReadyAt;
 
+    [Header("Auto-Dodge (à gauche)")]
+    [SerializeField] bool autoDodgeOnRelease = true;
+    [SerializeField] float dodgeDistance = 1.2f;   // combien vers la gauche
+    [SerializeField] float dodgeSpeed = 6f;        // unités / sec
+    [SerializeField] float dodgeMaxTime = 0.35f;   // garde-fou
+
+
+    [SerializeField] bool autoReturnToStart = true;   // ← revient au point de départ
+    [SerializeField] float returnSpeed = 8f;
+    [SerializeField] float returnMaxTime = 0.6f;
+    [SerializeField] float returnDelay = 0.05f;  // petite pause avant le retour
+
+    Coroutine dodgeCo;
+    Rigidbody2D _rb;
+    Vector3 _dodgeStartPos; // mémorise la position d’origine
+
     #endregion
 
     //
@@ -46,6 +63,8 @@ public class PlayerSucc : MonoBehaviour
 
         var sab = _pi.actions["BlindEnemies"];
         sab.performed += SabotageInput;
+
+        _rb = GetComponent<Rigidbody2D>(); // optionnel
     }
 
     #endregion
@@ -69,7 +88,14 @@ public class PlayerSucc : MonoBehaviour
         if (!IsAlive) return;
         if (ctx.started) { IsSuccing = true; Debug.Log($"[INPUT] P{Index} HOLD START"); }
 
-        if (ctx.canceled) { IsSuccing = false; Debug.Log($"[INPUT] P{Index} HOLD END"); }
+        if (ctx.canceled)
+        {
+            IsSuccing = false;
+            Debug.Log($"[INPUT] P{Index} HOLD END");
+
+            if (autoDodgeOnRelease)
+                StartDodgeLeft();
+        }
     }
 
     public void SabotageInput(InputAction.CallbackContext ctx) // option (Q / bouton West)
@@ -134,7 +160,68 @@ public class PlayerSucc : MonoBehaviour
             InDeathZone = false;
             IsSuccing = false;                 // on “lâche” en esquivant (option)
             iFrameUntil = Time.time + iFrameDuration; // courte invincibilité
+            if (dodgeCo != null) { StopCoroutine(dodgeCo); dodgeCo = null; }
         }
+    }
+
+    void StartDodgeLeft()
+    {
+        // déjà en dodge ? on redémarre
+        if (dodgeCo != null) StopCoroutine(dodgeCo);
+        dodgeCo = StartCoroutine(DodgeLeftAndReturnCo());
+    }
+
+    IEnumerator DodgeLeftAndReturnCo()
+    {
+        // --- phase 1 : mémoriser le départ et aller à gauche ---
+        _dodgeStartPos = transform.position;
+        Vector3 leftTarget = _dodgeStartPos + Vector3.left * dodgeDistance;
+
+        bool hasRB = _rb != null;
+        bool useFixed = hasRB && _rb.bodyType == RigidbodyType2D.Dynamic;
+
+        float endTime = Time.time + dodgeMaxTime;
+        while (Time.time < endTime && !IsSuccing)   // si tu recommences à sucer, on interrompt l’esquive
+        {
+            Vector3 cur = transform.position;
+            Vector3 next = Vector3.MoveTowards(cur, leftTarget, dodgeSpeed * (useFixed ? Time.fixedDeltaTime : Time.deltaTime));
+
+            if (hasRB)
+            {
+                if (useFixed) _rb.MovePosition(next);
+                else _rb.position = next;         // Kinematic
+            }
+            else transform.position = next;
+
+            if ((next - leftTarget).sqrMagnitude <= 0.0001f) break;
+            if (useFixed) yield return new WaitForFixedUpdate(); else yield return null;
+        }
+
+        // Option : petite pause avant de revenir
+        if (autoReturnToStart) yield return new WaitForSeconds(returnDelay);
+
+        // --- phase 2 : retour à la position d’origine ---
+        if (autoReturnToStart)
+        {
+            float endRet = Time.time + returnMaxTime;
+            while (Time.time < endRet)
+            {
+                Vector3 cur = transform.position;
+                Vector3 next = Vector3.MoveTowards(cur, _dodgeStartPos, returnSpeed * (useFixed ? Time.fixedDeltaTime : Time.deltaTime));
+
+                if (hasRB)
+                {
+                    if (useFixed) _rb.MovePosition(next);
+                    else _rb.position = next;
+                }
+                else transform.position = next;
+
+                if ((next - _dodgeStartPos).sqrMagnitude <= 0.0001f) break;
+                if (useFixed) yield return new WaitForFixedUpdate(); else yield return null;
+            }
+        }
+
+        dodgeCo = null;
     }
 
     #endregion
