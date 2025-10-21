@@ -201,7 +201,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 37935526}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 244487029}
+        m_TargetAssemblyTypeName: PlayerJoinManager, Assembly-CSharp
+        m_MethodName: ApplySkin
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &37935526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,6 +262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 244487027}
   - component: {fileID: 244487028}
+  - component: {fileID: 244487029}
   m_Layer: 0
   m_Name: Component_Script_PlayerInputManager
   m_TagString: Untagged
@@ -291,8 +304,8 @@ MonoBehaviour:
   m_PlayerJoinedEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1476773314}
-        m_TargetAssemblyTypeName: PlayerIDManager, Assembly-CSharp
+      - m_Target: {fileID: 244487029}
+        m_TargetAssemblyTypeName: PlayerJoinManager, Assembly-CSharp
         m_MethodName: OnPlayerJoinedEvent
         m_Mode: 0
         m_Arguments:
@@ -318,8 +331,8 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
-  m_PlayerPrefab: {fileID: 9053094497860098403, guid: 4029cdff09d3df047af9b25c2b2326b0, type: 3}
-  m_SplitScreen: 1
+  m_PlayerPrefab: {fileID: 718501044431860052, guid: 97416c21680749f40972f6e249e76baa, type: 3}
+  m_SplitScreen: 0
   m_MaintainAspectRatioInSplitScreen: 0
   m_FixedNumberOfSplitScreens: -1
   m_SplitScreenRect:
@@ -328,6 +341,22 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!114 &244487029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244487026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be334439271a354e805d48b206b1fff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerJoinManager
+  playerId: 
+  playerSkin:
+  - {fileID: -1585001051990805626, guid: f5b9bfc19b913c74a81831030722e47d, type: 3}
+  - {fileID: -1190373903913567415, guid: afefbd36ec1d8064fbff4a6574e4202e, type: 3}
 --- !u!1 &739549019
 GameObject:
   m_ObjectHideFlags: 0
@@ -743,7 +772,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1048050223}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1048050223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1002,7 +1043,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1310764150}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 244487029}
+        m_TargetAssemblyTypeName: PlayerJoinManager, Assembly-CSharp
+        m_MethodName: ApplySkin
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1310764150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1041,51 +1094,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1310764147}
   m_CullTransparentMesh: 1
---- !u!1 &1476773312
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1476773313}
-  - component: {fileID: 1476773314}
-  m_Layer: 0
-  m_Name: Script_PlayerIDManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1476773313
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1476773312}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2073955452}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1476773314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1476773312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5be334439271a354e805d48b206b1fff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  playerId: 
 --- !u!1 &1516815594
 GameObject:
   m_ObjectHideFlags: 0
@@ -1276,7 +1284,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: 0}
+  m_AnchoredPosition: {x: -222, y: 0}
   m_SizeDelta: {x: 100, y: 99.79999}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1613980820
@@ -1322,7 +1330,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1613980821}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 244487029}
+        m_TargetAssemblyTypeName: PlayerJoinManager, Assembly-CSharp
+        m_MethodName: ApplySkin
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1613980821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1397,7 +1417,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: 0}
+  m_AnchoredPosition: {x: 222, y: 0}
   m_SizeDelta: {x: 100, y: 99.79999}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1761341958
@@ -1443,7 +1463,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1761341959}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 244487029}
+        m_TargetAssemblyTypeName: PlayerJoinManager, Assembly-CSharp
+        m_MethodName: ApplySkin
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1761341959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1785,7 +1817,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 244487027}
-  - {fileID: 1476773313}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2086712298
