@@ -12,9 +12,6 @@ public class PlayerJoinManager : MonoBehaviour
     private PlayerData currentPlayer;
     [SerializeField] private Sprite[] playerSkin;
     private List<int> takenSkins;
-    //private bool newPlayerCanJoin;
-    // 
-    
 
     private void Start()
     {
