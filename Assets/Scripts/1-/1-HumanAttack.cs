@@ -59,15 +59,6 @@ public class HumanAttack : MonoBehaviour
         if (!IsCurrent(token)) yield break; // annulé pendant l’attente
 
 
-        // FEINTE ?
-        if (Random.value < feintChance)
-        {
-            SetState(VisState.Idle);
-            yield return StartCooldown();
-            IsBusy = false; seqCo = null;
-            yield break;
-        }
-
         SetState(VisState.Idle);
 
         // 1) petit délai avant de montrer l'alerte
@@ -78,7 +69,7 @@ public class HumanAttack : MonoBehaviour
         float alertDur = Random.Range(alertTime.x, alertTime.y);
         yield return new WaitForSeconds(alertDur);
 
-        // 3) (facultatif) feinte : revenir Idle sans attaquer
+        // feinte : revenir Idle sans attaquer
         if (Random.value < feintChance)
         {
             SetState(VisState.Idle);
@@ -87,12 +78,12 @@ public class HumanAttack : MonoBehaviour
             yield break;
         }
 
-        // 4) ATTAQUE (montre image Attack) + laser qui tombe tout droit
+        // 4) ATTAQUE
         SetState(VisState.Attack);
 
         if (laser != null && manager != null && targetIndex >= 0 && targetIndex < manager.players.Length)
         {
-            PlayerSucc tgt = manager.players[targetIndex]; // ou: var tgt = manager.players[targetIndex];
+            PlayerSucc tgt = manager.players[targetIndex];
             if (tgt != null)
             {
                 float xSnap = tgt.transform.position.x;
@@ -100,7 +91,7 @@ public class HumanAttack : MonoBehaviour
                 // Si tu as bien la méthode dans LaserAttack :
                 float travel = laser.EstimateTravelTimeFromCurrentStartY();
 
-                laser.FireAtX(xSnap);               // ← un seul appel !
+                laser.FireAtX(xSnap);          
                 yield return new WaitForSeconds(travel + 0.05f);
             }
         }

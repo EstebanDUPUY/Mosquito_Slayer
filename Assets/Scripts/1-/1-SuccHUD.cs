@@ -20,8 +20,7 @@ public class SuccHUD : MonoBehaviour
     public Image[] splashMask;
     [SerializeField] float splashFadeOut = 0.3f;
 
-    [SerializeField] GameObject winnerPanel;   // <- assigne ton panel ici
-    [SerializeField] Text winnerText;          // <- texte dans le panel
+    [SerializeField] GameObject winnerPanel; 
     [SerializeField] bool autoWinFromFill = true; // déclenche si une barre atteint 1.0
 
     public GameObject[] defeatPanels;   // un panel par joueur
@@ -31,7 +30,7 @@ public class SuccHUD : MonoBehaviour
     #endregion
 
     //
-    #region API
+    #region AUTRES FONCTIONS
 
     public void ResetAll()
     {
@@ -50,7 +49,6 @@ public class SuccHUD : MonoBehaviour
             foreach (var m in splashMask) if (m) m.gameObject.SetActive(false);
 
         if (winnerPanel) winnerPanel.SetActive(false);
-        if (winnerText) { winnerText.text = ""; if (winnerText.gameObject != winnerPanel) winnerText.gameObject.SetActive(false); }
         if (defeatPanels != null)
             foreach (var d in defeatPanels) if (d) d.SetActive(false);
 
@@ -101,7 +99,6 @@ public class SuccHUD : MonoBehaviour
         if (victoryShown) return;
         victoryShown = true;
 
-        if (winnerText) { winnerText.text = $"Joueur {i + 1} gagne !"; winnerText.gameObject.SetActive(true); }
         if (winnerPanel) winnerPanel.SetActive(true);
     }
 

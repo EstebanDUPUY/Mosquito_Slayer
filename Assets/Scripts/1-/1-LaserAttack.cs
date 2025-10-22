@@ -37,7 +37,7 @@ public class LaserAttack : MonoBehaviour
 
         transform.SetParent(null, true);
 
-        _lockedX = xSnapshot + startXOffset;   // ← applique l’offset une seule fois
+        _lockedX = xSnapshot + startXOffset;   //  applique l’offset une seule fois
 
         float startY = (origin ? origin.position.y : transform.position.y) + startYOffset;
         _stopY = ground ? ground.position.y + stopAboveGround : startY - 5f;

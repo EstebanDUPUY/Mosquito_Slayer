@@ -341,6 +341,7 @@ MonoBehaviour:
   origin: {fileID: 665507523}
   fallSpeed: 10
   startYOffset: 0
+  startXOffset: 0
   stopAboveGround: 0.05
 --- !u!50 &481165743
 Rigidbody2D:
@@ -642,7 +643,6 @@ MonoBehaviour:
   - {fileID: 1913699737}
   splashFadeOut: 2
   winnerPanel: {fileID: 1928084236}
-  winnerText: {fileID: 0}
   autoWinFromFill: 1
   defeatPanels:
   - {fileID: 1389983542}
@@ -1315,7 +1315,7 @@ MonoBehaviour:
   IsSuccing: 0
   OnGroundSuck: 1
   InDeathZone: 0
-  iFrameDuration: 0.25
+  iFrameDuration: 0.3
   sabotageCooldown: 3
   autoDodgeOnRelease: 1
   dodgeDistance: 2
