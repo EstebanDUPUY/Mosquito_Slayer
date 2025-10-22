@@ -33,7 +33,7 @@ public class PlayerJoinManager : MonoBehaviour
         // Assign id to player
         playerId[playerIndex] = playerInput.devices[0].deviceId;
         playerIndex++;
-        playerData.myDeviceIdPV = playerInput.devices[0].deviceId;
+        currentPlayer.myDeviceIdPV = playerInput.devices[0].deviceId;
     }
 
     public void ApplySkin(int skinIndex)
