@@ -17,6 +17,7 @@ public class LayLobby : MonoBehaviour
         var id = inputManager.playerCount - 1;
         var player = input.gameObject;
         player.transform.position = new(id * 100, 0, 0);
+        //input.devices[0].deviceId
 
         var playerLay = player.GetComponent<LayPlayer>();
         if (playerLay != null)
