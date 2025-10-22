@@ -12,6 +12,7 @@ public class PlayerJoinManager : MonoBehaviour
     private PlayerData currentPlayer;
     [SerializeField] private Sprite[] playerSkin;
     private List<int> takenSkins;
+    private List<PlayerData> joinedPlayers;
 
     private void Start()
     {
@@ -19,6 +20,7 @@ public class PlayerJoinManager : MonoBehaviour
         pIMVar = GetComponent<PlayerInputManager>();
         // Create takenSkins list
         takenSkins = new List<int>();
+        joinedPlayers = new List<PlayerData>();
     }
 
     public void OnPlayerJoinedEvent(PlayerInput playerInput)
@@ -48,8 +50,16 @@ public class PlayerJoinManager : MonoBehaviour
         //
         currentPlayer.spriteRendererRef.sprite = currentPlayer.playerSpritePV;
         
+        joinedPlayers.Add(currentPlayer);
         // Re-enable joining 
         currentPlayer = null;
         pIMVar.EnableJoining();
     }
+    public void OnStartButtonPressed()
+    {
+        if (joinedPlayers.Count < 2) return;
+        GameManager.instance.SetPlayer(joinedPlayers); //mettre cette formule dans tous les autres scripts pour le win de chaque mini-jeu : GameManager.instance.AddScoreToPlayer 
+        GameManager.instance.AvengersStartGame();
+    }
+
 }

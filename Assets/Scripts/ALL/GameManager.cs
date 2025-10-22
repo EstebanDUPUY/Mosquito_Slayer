@@ -4,22 +4,51 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
     private PlayerData[] players;
     private PlayerData currentPlayer;
     private int miniGamesPlayed;
     private List<int> playedGames;
     private List<int> nonPlayedGames;
 
-    private void Start()
+    private void Awake()
     {
-        currentPlayer.scorePV = 0;
+        DontDestroyOnLoad(gameObject);
+        instance = this;
+    }
+    public void AvengersStartGame()
+    {
+        for (int i = 0; i < players.Length; i++)
+        {
+            SetPlayerScore(players[i], 0);
+        }
+        playedGames = new List<int>();
+        miniGamesPlayed = 0;
+        NextMiniGame();
     }
 
-    private void SetPlayer()
+    private void AvengersEndGame()
     {
-        
+        ChangeScene("Score");
     }
-    private void AddScoreToPlayer(PlayerData winner)
+
+    private void AvengersLateGame()
+    {
+       for (int j = players.Length - 1; j > 0; j--)
+       {
+          Destroy(players[j]);
+       }
+        players = new PlayerData[0];
+    }
+    public void SetPlayer(List<PlayerData> avengersAssemble)
+    {
+        players = avengersAssemble.ToArray();
+    }
+    private void SetPlayerScore(PlayerData player, int score)
+    {
+        player.scorePV = score;
+    }
+    public void AddScoreToPlayer(PlayerData winner)
     {
         if (winner != null /*win*/) winner.scorePV++;
     }
@@ -27,16 +56,29 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(nextScene);
     }
-    private void NextMiniGame()
+
+    private void ChangeScene(string nextScene)
+    {
+        SceneManager.LoadScene(nextScene);
+    }
+    public void NextMiniGame()
     {
         if (miniGamesPlayed < 4)
         {
             miniGamesPlayed++;
-            int gameIndex = Random.Range(0,nonPlayedGames.Count);
+            int gameIndex = Random.Range(0, nonPlayedGames.Count);
+
+            while (playedGames.Contains(gameIndex))
+            {
+                gameIndex = Random.Range(0, nonPlayedGames.Count);
+            }
+            ChangeScene(gameIndex);
+            playedGames.Add(gameIndex); 
+           
         }
-        else 
+        else
         {
-            ChangeScene(5);
+            AvengersEndGame();
         }
     }
 }

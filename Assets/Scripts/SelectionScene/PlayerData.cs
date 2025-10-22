@@ -9,6 +9,10 @@ public class PlayerData : MonoBehaviour
     public SpriteRenderer spriteRendererRef;
     public int scorePV;
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
     private void Start()
     {
         playerInputPV = GetComponent<PlayerInput>(); 
