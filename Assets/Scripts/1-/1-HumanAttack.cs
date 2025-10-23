@@ -3,7 +3,7 @@ using System.Collections;
 
 public class HumanAttack : MonoBehaviour
 {
-    // Petit FSM pour garantir un seul état visuel à la fois
+    // Garantir un seul état visuel à la fois
     private enum VisState { Idle, Alert, Attack }
 
     [Header("Images")]
@@ -19,7 +19,7 @@ public class HumanAttack : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float feintChance = 0.25f;          // % de feinte (alerte puis rien)
 
     [Header("Gameplay (option)")]
-    [SerializeField] SuccManager manager;
+    [SerializeField] SuccManager manager; //on récupère le chef d'orchestre
 
     // Garde-fous anti chevauchement
     public bool IsBusy { get; private set; } // séquence en cours
@@ -34,7 +34,7 @@ public class HumanAttack : MonoBehaviour
     void Start()
     {
         SetState(VisState.Idle);
-        if (!manager) manager = FindObjectOfType<SuccManager>();
+        if (!manager) manager = FindAnyObjectByType<SuccManager>();
         if (laser) laser.gameObject.SetActive(false);
 
     }
@@ -86,12 +86,12 @@ public class HumanAttack : MonoBehaviour
             PlayerSucc tgt = manager.players[targetIndex];
             if (tgt != null)
             {
-                float xSnap = tgt.transform.position.x;
+                float xSnap = tgt.transform.position.x; // c'est la position X du joueur visé
 
-                // Si tu as bien la méthode dans LaserAttack :
+                // Si on a  bien la méthode dans LaserAttack :
                 float travel = laser.EstimateTravelTimeFromCurrentStartY();
 
-                laser.FireAtX(xSnap);          
+                laser.FireAtX(xSnap);  //sert à tirer dans l'axe X du joueur
                 yield return new WaitForSeconds(travel + 0.05f);
             }
         }
@@ -101,14 +101,14 @@ public class HumanAttack : MonoBehaviour
         }
 
         // sécurité
-        if (laser && laser.Active) laser.StopNow();
+        if (laser && laser.Active) laser.StopNow(); //on coupe le laser par sécurité
 
         SetState(VisState.Idle);
         yield return StartCooldown();
         IsBusy = false; seqCo = null;
     }
 
-    IEnumerator StartCooldown()
+    IEnumerator StartCooldown() //on met en repos, puis on réattaque après la fin du cooldown
     {
         Cooldown = true;
         yield return new WaitForSeconds(Random.Range(cooldownTime.x, cooldownTime.y));
@@ -117,11 +117,11 @@ public class HumanAttack : MonoBehaviour
 
     // ————— Helpers —————
 
-    bool IsCurrent(int token) => token == _seqToken;
+    bool IsCurrent(int token) => token == _seqToken; //on vérifie que la séquence est toujours valide, sinon on annule
 
     void SetState(VisState st)
     {
-        // Exclusivité : une seule image active à la fois
+        //Une seule image active à la fois
         if (idleImage) idleImage.SetActive(st == VisState.Idle);
         if (alertImage) alertImage.SetActive(st == VisState.Alert);
         if (attackImage) attackImage.SetActive(st == VisState.Attack);

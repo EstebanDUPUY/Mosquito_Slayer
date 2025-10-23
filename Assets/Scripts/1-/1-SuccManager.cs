@@ -3,16 +3,16 @@ using System.Collections;
 
 public class SuccManager : MonoBehaviour
 {
-    //
+    
     #region VARIABLES
 
     [Header("Règles")]
     [SerializeField] int targetScore = 20;
     [SerializeField] float tickInterval = 0.25f;
-    // === Blood decay (points that go down when not sucking) ===
+
     [Header("Blood Decay")]
     [SerializeField] bool enableBloodDecay = true;
-    [SerializeField] float bloodDecayPerSecond = 1.0f; // ex: 1 pt/sec when not sucking
+    [SerializeField] float bloodDecayPerSecond = 1.0f;
 
     [Header("Attaques humaines")]
     [SerializeField] float baseAttackInterval = 2.0f;
@@ -37,7 +37,6 @@ public class SuccManager : MonoBehaviour
     float tickTimer, attackTimer, elapsed;
     bool roundOver;
     private Coroutine tickCo;
-    // per-player fractional accumulator for decay
     float[] _decayAcc;
     // --- Planning stochastique des attaques ---
     [SerializeField] float attentionThreshold = 0.15f; // en-dessous, aucune attaque planifiée
@@ -52,7 +51,7 @@ public class SuccManager : MonoBehaviour
 
     void Start()
     {
-        StartRound();
+        StartRound(); //on démarre une nouvelle manche au lancement
     }
 
     void Update()
@@ -70,32 +69,29 @@ public class SuccManager : MonoBehaviour
             return;
         }
 
-        // si rien de planifié → planifie maintenant en tenant compte de l'attention actuelle
+        // si rien de planifié, on planifie une attaque maintenant 
         if (_nextAttackAt < 0f)
         {
             ScheduleNextAttack();
-            // Debug.Log($"[SCHED] first plan in {(_nextAttackAt - Time.time):0.00}s (maxAtt={att:0.00})");
         }
         else
         {
-            // si l'attention a fortement augmenté, avance la prochaine attaque (évite les "999s")
-            float suggested = SampleNextAttackDelay(elapsed);         // délai “moyen” actuel
-            float remaining = _nextAttackAt - Time.time;
+            // si l'attention a fortement augmenté, avance la prochaine attaque pour éviter de longs délais  (évite les "999s")
+            float suggested = SampleNextAttackDelay(elapsed);         // délai “moyen” conseillé 
+            float remaining = _nextAttackAt - Time.time; //Temps restant avant l'attaque planifiée
 
-            // hysteresis : si la date planifiée est beaucoup trop loin par rapport au rythme actuel, on réajuste
+            // On avance l'attaque si le délai suggéré est beaucoup plus court que le temps restant
             if (remaining > suggested * 2.0f)
             {
                 _nextAttackAt = Time.time + suggested;
-                // Debug.Log($"[SCHED] tighten to {suggested:0.00}s (was {remaining:0.00}s), maxAtt={att:0.00}");
             }
         }
 
-        // déclenche quand on atteint l'échéance
+        // Si on a atteint le moment de l'attaque
         if (Time.time >= _nextAttackAt)
         {
-            ResolveAttack();
+            ResolveAttack(); // on fait l'attaque ici
             ScheduleNextAttack(); // replanifie pour la suite (selon attention/temps)
-                                  // Debug.Log($"[SCHED] next in {(_nextAttackAt - Time.time):0.00}s (maxAtt={att:0.00})");
         }
     }
 
@@ -104,85 +100,86 @@ public class SuccManager : MonoBehaviour
 
     void OnDisable()
     {
-        if (tickCo != null) StopCoroutine(tickCo);
+        if (tickCo != null) StopCoroutine(tickCo); //si on désactive l'objet, on arrête la coroutine de tics
     }
 
     IEnumerator TickLoop()
     {
-        while (!roundOver)
+        while (!roundOver) //tant que la manche n'est pas terminée
         {
-            yield return new WaitForSeconds(tickInterval); // stable, pas lié aux FPS
-            ProcessTick(); // on fait 1 tick ici
+            yield return new WaitForSeconds(tickInterval); // On attend le tic
+            ProcessTick(); // on fait 1 tic ici
         }
     }
 
     void ProcessTick()
     {
-        for (int i = 0; i < players.Length; i++)
+        for (int i = 0; i < players.Length; i++) //pour chaque joueur
         {
-            var p = players[i]; if (p == null || !p.IsAlive) continue;
+            var p = players[i]; 
+            if (p == null || !p.IsAlive) continue;
 
-            // ---- GAIN when holding ----
+            // Si le joueur suce au sol et n'a pas encore atteint le score cible, il gagne des points et de l'attention
             if (p.IsSuccing && p.OnGroundSuck && p.Points < targetScore)
             {
                 p.AddPoints(+1);
-                p.Attention = Mathf.Clamp01(p.Attention + Random.Range(attentionGainMin, attentionGainMax));
+                p.Attention = Mathf.Clamp01(p.Attention + Random.Range(attentionGainMin, attentionGainMax)); //l'attention monte un peu quand on suce de manière aléatoire
 
-                // while sucking, don't “carry” decay debt
-                if (_decayAcc != null) _decayAcc[i] = 0f;
+                if (_decayAcc != null) _decayAcc[i] = 0f; //on efface l'accumulateur de descente de la jauge quand on suce
             }
             else
             {
-                // ---- ATTENTION natural decay ----
+                // L'attention baisse un peu à chaque tick si on ne suce pas
                 p.Attention = Mathf.Clamp01(p.Attention - attentionDecay * tickInterval);
 
-                // ---- BLOOD DECAY (points go down) ----
+                // Le sang de la jauge diminue si on ne suce pas
                 if (enableBloodDecay && p.Points > 0)
                 {
-                    // accumulate fractional decay using tickInterval
-                    _decayAcc[i] += bloodDecayPerSecond * tickInterval;     // points to remove (fractional)
-                    int dec = Mathf.FloorToInt(_decayAcc[i]);               // whole points to remove now
+                    _decayAcc[i] += bloodDecayPerSecond * tickInterval;     // formule pour la perte des points, ici c'est 0.25 points par tick si c'est 1pt/sec et tickInterval=0.25s
+                    int dec = Mathf.FloorToInt(_decayAcc[i]); //on enlève des points entiers quand on peut 
                     if (dec > 0)
                     {
-                        p.AddPoints(-dec);
-                        _decayAcc[i] -= dec;                                // keep the fractional remainder
+                        p.AddPoints(-dec); // on soustrait les points
+                        _decayAcc[i] -= dec;  // on garde le reste
                     }
                 }
             }
 
             // ---- HUD ----
-            float ratio = Mathf.InverseLerp(0, p.MaxPoints, p.Points);
-            hud?.SetBlood(i, ratio);
+            float ratio = Mathf.InverseLerp(0, p.MaxPoints, p.Points); //conversion en ratio 0-1 pour la jauge
+            hud?.SetBlood(i, ratio); //la jauge de sang visuellement 
             hud?.SetAttention(i, p.Attention);
 
-            // ---- Victory check ----
+            // Victoire si la jauge est pleine 
             if (p.Points >= p.MaxPoints)
             {
-                hud?.SetBlood(i, 1f);
-                EndRound(p);
+                hud?.SetBlood(i, 1f); //on s'assure d'avoir la jauge pleine visuellement 
+                EndRound(p); //fin de manche avec ce gagnant 
                 return;
             }
         }
     }
 
-
-    //
     #region LOGIQUE
 
     public void StartRound()
     {
-        roundOver = false;
-        elapsed = attackTimer = 0f;
-        hud?.ResetAll();
-        for (int i = 0; i < players.Length; i++)
+        roundOver = false; //la manche commence 
+        elapsed = attackTimer = 0f; //on remet les timers à zéro
+        hud?.ResetAll(); //on reset le HUD
+
+        for (int i = 0; i < players.Length; i++) //on initialise chaque joueur
         {
             var p = players[i]; if (!p) continue;
-            p.Index = i; p.Manager = this; p.ResetState(targetScore);
-            hud?.SetBlood(i, 0f); hud?.SetAttention(i, 0f);
+            p.Index = i; //Numéro du joueur
+            p.Manager = this; //on assigne le manager au joueur
+            p.ResetState(targetScore); //on remet le joueur à zéro au niveau des points et états
+            hud?.SetBlood(i, 0f); //jauge vide
+            hud?.SetAttention(i, 0f); //attention à 0
         }
-        if (tickCo != null) StopCoroutine(tickCo);
+        if (tickCo != null) StopCoroutine(tickCo); //on relance la coroutine de tics proprement 
         tickCo = StartCoroutine(TickLoop());
-        // allocate/reset per-player decay accumulators
+        // on efface les accumulateurs de descente pour chaque joueur 
         if (_decayAcc == null || _decayAcc.Length != players.Length)
             _decayAcc = new float[players.Length];
         else
@@ -191,50 +188,48 @@ public class SuccManager : MonoBehaviour
 
     void EndRound(PlayerSucc winner)
     {
-        roundOver = true;
-        if (tickCo != null) { StopCoroutine(tickCo); tickCo = null; }
-        hud?.ShowWinner(winner.Index);
+        roundOver = true; //la manche est terminée
+        if (tickCo != null) { StopCoroutine(tickCo); tickCo = null; } //on arrête les tics
+        hud?.ShowWinner(winner.Index); //on affiche le panel de victoire pour le gagnant
     }
 
 
     public void ResolveAttack()
     {
-        // … choisis target (comme tu le fais déjà)
+        // On choisit la cible qui a la plus grande attention 
         int target = -1; float best = -1f;
         for (int i = 0; i < players.Length; i++)
         {
             var p = players[i]; if (p == null || !p.IsAlive) continue;
             if (p.Attention > best) { best = p.Attention; target = i; }
         }
-        if (target < 0) return;
+        if (target < 0) return; //si on a pas de cible, on fait rien
 
-        // <<< NE déclenche que si l'humain est prêt
+        // On déclenche le laser seulement si l'humain est prêt 
         if (human != null && !human.IsBusy && !human.Cooldown)
-            human.PlayAttackSequence(target);
+            human.PlayAttackSequence(target); //l'humain fera ses différents états et attaquera la cible choisie
         else if (human == null)
         {
-            // fallback direct si tu n'utilises pas l'humain visuel
-            players[target].TryKillFromAttack();
-            CheckLastAlive();
+            players[target].TryKillFromAttack(); // tue la cible si elle succ en deathzone 
+            CheckLastAlive(); //on vérifie s'il reste des joueurs en vie
         }
     }
 
 
     public void OnSabotageAsked(int attackerIndex)
     {
-        var a = SafePlayer(attackerIndex);
+        var a = SafePlayer(attackerIndex); //on récupère le joueur attaquant
         if (a == null) { Debug.Log("[SABO] attacker null"); return; }
 
-        if (a.Points < sabotageCost)
+        if (a.Points < sabotageCost) //si pas assez de points, on annule le sabotage
         {
             Debug.Log("[SABO] not enough points");
             return;
         }
 
-        // --- Cherche une cible vivante ≠ attaquant ---
-        int tIdx = -1;
+        // On cherche aléatoirement un joueur vivant autre que l'attaquant
 
-        // 1) vivant ≠ attaquant (aléatoire)
+        int tIdx = -1;
         {
             System.Collections.Generic.List<int> cand = new System.Collections.Generic.List<int>();
             for (int i = 0; i < players.Length; i++)
@@ -246,7 +241,7 @@ public class SuccManager : MonoBehaviour
             if (cand.Count > 0) tIdx = cand[Random.Range(0, cand.Count)];
         }
 
-        // 2) fallback : n'importe quel vivant
+        // Si on ne trouve personne, on cible n'importe quel joueur en vie autre que l'attaquant
         if (tIdx < 0)
         {
             for (int i = 0; i < players.Length; i++)
@@ -256,14 +251,14 @@ public class SuccManager : MonoBehaviour
             }
         }
 
-        // 3) dernier fallback : self-blind (au moins feedback visuel)
+        // S'il n'y a personne, on se sabote soi-même pour le feedback visuel
         if (tIdx < 0) tIdx = attackerIndex;
 
-        // --- Débite & HUD ---
+        // On retire les points du joueur et on met à jour sa jauge 
         a.AddPoints(-sabotageCost);
         hud?.SetBlood(attackerIndex, Mathf.InverseLerp(0, a.MaxPoints, a.Points));
 
-        if (hud != null && hud.splashMask != null &&
+        if (hud != null && hud.splashMask != null && //on affiche le splash sur la cible souhaitée
             tIdx >= 0 && tIdx < hud.splashMask.Length && hud.splashMask[tIdx] != null)
         {
             Debug.Log($"[SABO] splash -> P{tIdx} ({splashDuration}s)");
@@ -277,19 +272,17 @@ public class SuccManager : MonoBehaviour
 
     void CheckLastAlive()
     {
-        PlayerSucc last = null; int alive = 0;
+        PlayerSucc last = null; int alive = 0; //Compte les vivants et garde le dernier trouvé
         foreach (var p in players) if (p && p.IsAlive) { alive++; last = p; }
-        if (alive == 1 && last != null) EndRound(last);
-        // HUD morts
+        if (alive == 1 && last != null) EndRound(last); //s'il n'en reste qu'un, il gagne
+
         for (int i = 0; i < players.Length; i++)
-            if (players[i] && !players[i].IsAlive) hud?.SetDead(i);
+            if (players[i] && !players[i].IsAlive) hud?.SetDead(i); //on affiche une croix sur les morts
     }
 
+    PlayerSucc SafePlayer(int i) => (i >= 0 && i < players.Length) ? players[i] : null; //on récupère le joueur en sécurité si l'index est bon
 
-
-    PlayerSucc SafePlayer(int i) => (i >= 0 && i < players.Length) ? players[i] : null;
-
-    float MaxAttention()
+    float MaxAttention() // retourne l'attention max parmi les joueurs vivants
     {
         float m = 0f;
         for (int i = 0; i < players.Length; i++)
@@ -300,23 +293,22 @@ public class SuccManager : MonoBehaviour
 
     float SampleNextAttackDelay(float elapsedSec)
     {
-        // Intensité de base (monte avec le temps, comme avant)
+        // On calcule le taux d'attaque de l'ennemi en fonction du temps écoulé, plus le temps passe, plus l'ennemi attaquera souvent 
         float t01 = Mathf.Clamp01(elapsedSec / timeToMinAttack);
         float lambda = Mathf.Lerp(1f / baseAttackInterval, 1f / minAttackInterval, t01); // 1/sec
 
-        // Modulation par l’attention max (si faible → beaucoup moins d’attaques)
-        float att = MaxAttention(); // 0..1
-                                    // facteur 0.25x → 2.0x (à régler)
+        // On multiplie par un facteur lié à l’attention max: plus elle est haute, plus les attaques sont fréquentes.
+        float att = MaxAttention();                                  
         float attFactor = Mathf.Lerp(0.25f, 2.0f, att);
         lambda *= attFactor;
 
-        // Jitter pour casser les patterns
+        // On met du hasard pour casser les patterns 
         lambda *= Random.Range(0.8f, 1.25f);
 
-        // Si personne n’attire l’attention, retourne un délai très long
+        // Si personne n’attire l’attention, retourne un délai très long pour qu'il n'attaque jamais 
         if (att < attentionThreshold) return 999f;
 
-        // Délai ~ expo
+        // On tire un délai
         float u = Mathf.Clamp01(Random.value);
         float delay = -Mathf.Log(1f - u) / Mathf.Max(0.0001f, lambda);
         return Mathf.Max(minGapAfterAttack, delay);
@@ -324,28 +316,24 @@ public class SuccManager : MonoBehaviour
 
     public void ScheduleNextAttack()
     {
-        _nextAttackAt = Time.time + SampleNextAttackDelay(elapsed);
+        _nextAttackAt = Time.time + SampleNextAttackDelay(elapsed); //on prépare la prochaine attaque
     }
 
     public void OnLaserHit(PlayerSucc p)
     {
-        if (roundOver || p == null) return;
+        if (roundOver || p == null) return; //si la partie est finie ou il n'y a pas de joueur, on ne fait rien
 
-        // règle demandée : il meurt SEULEMENT s’il est en train de sucer
-        if (!p.IsAlive) return;
+        if (!p.IsAlive) return; //si le joueur est déjà mort, on ne fait rien
 
-        if (p.IsSuccing)
+        if (p.IsSuccing) //on punit le joueur seulement s'il est en train de sucer
         {
-            // mort + defeat
-            p.IsAlive = false;
-            p.IsSuccing = false;
+            p.IsAlive = false; //il meurt
+            p.IsSuccing = false; //il arrête de succ
 
-            // HUD
-            hud?.SetDead(p.Index);
-            hud?.ShowDefeat(p.Index);
+            hud?.SetDead(p.Index); //on montre la croix de mort pour ce joueur
+            hud?.ShowDefeat(p.Index); //on montre le panel de défaite pour ce joueur
 
-            // si tu as une logique de dernier survivant :
-            CheckLastAlive();
+            CheckLastAlive(); //on vérifie s'il reste des joueurs en vie
         }
         // sinon : il a esquivé (pas de sanction)
     }
