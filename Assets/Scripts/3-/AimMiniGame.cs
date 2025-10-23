@@ -3,18 +3,26 @@ using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI; // pour gérer les images UI
 
 public class AimMiniGame : MonoBehaviour
 {
-    [Header("Références")]
+    [Header("Références UI")]
     public Transform zoneTopLeft;
     public Transform zoneBottomRight;
     public Transform crosshair;
     public HumanTarget human;
-    public TMP_Text infoText;       // Texte général ("Touché !", "Raté !", etc.)
-    public TMP_Text timerText;      // Affiche le timer
-    public TMP_Text scoreText;      // Score total
-    public TMP_Text shotsText;      // Affiche le nombre de tirs restants
+    public TMP_Text infoText;
+    public TMP_Text timerText;
+    public TMP_Text scoreText;
+    public TMP_Text shotsText;
+
+    [Header("UI Visuelle des piqûres")]
+    public GameObject mosquitoIconPrefab; // prefab du moustique
+    public Transform bitesContainer;       // conteneur UI en bas à droite
+    public int maxIcons = 3;               // nombre max d’icônes
+
+    private List<GameObject> mosquitoIcons = new List<GameObject>();
 
     [Header("Paramètres de jeu")]
     public float moveSpeed = 3f;
@@ -22,12 +30,11 @@ public class AimMiniGame : MonoBehaviour
     public float roundDuration = 5f;
     public int totalRounds = 3;
     public int maxShotsPerRound = 3;
-    public float shootCooldown = 0.5f; // cooldown entre deux tirs
+    public float shootCooldown = 0.5f;
 
     [Header("Zones piquables")]
     public List<TargetZone> targetZones = new List<TargetZone>();
-    [Range(0f, 1f)]
-    public float chanceToGoNearTarget = 0.75f;
+    [Range(0f, 1f)] public float chanceToGoNearTarget = 0.75f;
     public float offsetAroundTarget = 0.5f;
 
     private MoskilltoControls controls;
@@ -41,7 +48,6 @@ public class AimMiniGame : MonoBehaviour
     private int currentRound = 1;
     private float lastShootTime = -999f;
 
-    // Crosshair feedback visuel
     private SpriteRenderer crosshairRenderer;
     private Color crosshairBaseColor;
 
@@ -70,9 +76,34 @@ public class AimMiniGame : MonoBehaviour
         if (crosshairRenderer != null)
             crosshairBaseColor = crosshairRenderer.color;
 
+        SetupMosquitoIcons();
         StartCoroutine(GameLoop());
     }
 
+    // Génère les icônes moustiques dans le conteneur
+    private void SetupMosquitoIcons()
+    {
+        if (mosquitoIconPrefab == null || bitesContainer == null)
+        {
+            return;
+        }
+        for (int i = 0; i < maxIcons; i++)
+        {
+            GameObject icon = Instantiate(mosquitoIconPrefab, bitesContainer);
+            mosquitoIcons.Add(icon);
+        }
+    }
+
+    // Actualise les icônes selon le nombre de tirs restants
+    private void UpdateBiteIcons()
+    {
+        for (int i = 0; i < mosquitoIcons.Count; i++)
+        {
+            mosquitoIcons[i].SetActive(i < shotsRemaining);
+        }
+    }
+
+    // Boucle générale du mini-jeu
     private IEnumerator GameLoop()
     {
         if (infoText) infoText.text = "Prépare-toi...";
@@ -91,6 +122,7 @@ public class AimMiniGame : MonoBehaviour
             scoreText.text = $"Score : {playerScore}";
     }
 
+    // Une manche complète
     private IEnumerator PlayRound(int round)
     {
         shotsRemaining = maxShotsPerRound;
@@ -99,10 +131,9 @@ public class AimMiniGame : MonoBehaviour
         float t = 0f;
 
         if (crosshair) crosshair.gameObject.SetActive(true);
-
-        if (infoText)
-            infoText.text = $"Manche {round}";
+        if (infoText) infoText.text = $"Manche {round}";
         UpdateShotsUI();
+        UpdateBiteIcons();
 
         currentTarget = GetRandomPointInZone();
 
@@ -141,21 +172,21 @@ public class AimMiniGame : MonoBehaviour
             infoText.text = $"Manche {round} terminée !";
     }
 
+    // Quand le joueur tire
     private void OnShoot(InputAction.CallbackContext ctx)
     {
         if (!canShoot || shotsRemaining <= 0) return;
 
-        // cooldown de tir
         if (Time.time - lastShootTime < shootCooldown)
         {
-            if (infoText)
-                infoText.text = "Recharge...";
+            if (infoText) infoText.text = "Recharge...";
             return;
         }
         lastShootTime = Time.time;
 
         shotsRemaining--;
         UpdateShotsUI();
+        UpdateBiteIcons();
 
         Vector2 origin = crosshair.position;
         Collider2D hit = Physics2D.OverlapPoint(origin);
@@ -174,23 +205,17 @@ public class AimMiniGame : MonoBehaviour
                 if (infoText)
                     infoText.text = $"Touché : {zone.zoneName} (+{pts})";
 
-                // Crosshair devient rouge quand il touche
                 StartCoroutine(FlashCrosshair(Color.red));
             }
             else
             {
-                if (infoText)
-                    infoText.text = "Raté !";
-
-                // Crosshair devient gris si on rate
+                if (infoText) infoText.text = "Raté !";
                 StartCoroutine(FlashCrosshair(Color.gray));
             }
         }
         else
         {
-            if (infoText)
-                infoText.text = "Raté !";
-
+            if (infoText) infoText.text = "Raté !";
             StartCoroutine(FlashCrosshair(Color.gray));
         }
 
@@ -205,6 +230,7 @@ public class AimMiniGame : MonoBehaviour
         }
     }
 
+    // Feedback visuel du viseur
     private IEnumerator FlashCrosshair(Color flashColor, float duration = 0.15f)
     {
         if (crosshairRenderer == null) yield break;
@@ -214,20 +240,22 @@ public class AimMiniGame : MonoBehaviour
         crosshairRenderer.color = crosshairBaseColor;
     }
 
+    // Texte affichant les piqûres restantes
     private void UpdateShotsUI()
     {
         if (shotsText)
-            shotsText.text = $"{shotsRemaining} piqûres restants";
+            shotsText.text = $"{shotsRemaining} piqûres restantes";
     }
 
+    // Recharge entre deux manches
     private IEnumerator ReloadNextRound()
     {
-        if (infoText)
-            infoText.text = "Manche terminée, préparation...";
+        if (infoText) infoText.text = "Manche terminée, préparation...";
         yield return new WaitForSeconds(1f);
         canShoot = true;
     }
 
+    // Sabotage (perturbation)
     private void OnSabotage(InputAction.CallbackContext ctx)
     {
         if (!isPerturbed)
@@ -241,6 +269,7 @@ public class AimMiniGame : MonoBehaviour
         isPerturbed = false;
     }
 
+    // Génération d’un point aléatoire dans la zone
     private Vector3 GetRandomPointInZone()
     {
         float minX = zoneTopLeft.position.x;
