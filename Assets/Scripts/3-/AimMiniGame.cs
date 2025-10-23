@@ -83,8 +83,10 @@ public class AimMiniGame : MonoBehaviour
     // Génère les icônes moustiques dans le conteneur
     private void SetupMosquitoIcons()
     {
-        if (mosquitoIconPrefab == null || bitesContainer == null) return;
-
+        if (mosquitoIconPrefab == null || bitesContainer == null)
+        {
+            return;
+        }
         for (int i = 0; i < maxIcons; i++)
         {
             GameObject icon = Instantiate(mosquitoIconPrefab, bitesContainer);
