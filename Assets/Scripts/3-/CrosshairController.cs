@@ -84,19 +84,23 @@ public class CrosshairController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (playerInput != null && playerInput.actions != null)
+        if (playerInput == null)
+            playerInput = GetComponent<PlayerInput>();
+
+        // On récupère l'instance locale du contrôleur du joueur
+        var localActions = playerInput.currentActionMap;
+
+        if (localActions == null || localActions.name != actionMapName)
         {
-            // Récupérer la bonne ActionMap
-            var map = playerInput.actions.FindActionMap(actionMapName, true);
-
-            // Récupérer les actions dans cette map
-            shootAction = map.FindAction("Shoot", true);
-            sabotageAction = map.FindAction("Sabotage", true);
-
-            // S'abonner aux événements
-            shootAction.performed += OnShootPerformed;
-            sabotageAction.performed += OnSabotagePerformed;
+            localActions = playerInput.actions.FindActionMap(actionMapName, true);
+            playerInput.SwitchCurrentActionMap(actionMapName);
         }
+
+        shootAction = localActions.FindAction("Shoot", true);
+        sabotageAction = localActions.FindAction("Sabotage", true);
+
+        shootAction.performed += OnShootPerformed;
+        sabotageAction.performed += OnSabotagePerformed;
     }
 
     private void OnDisable()
