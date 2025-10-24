@@ -29,7 +29,7 @@ public class LayBomb : MonoBehaviour
     private float explosionCountdown;
     private float maxCountdown;
     private bool gameStarted = false;
-    private bool bombIsActive = false;
+    public bool bombIsActive = false;
     private bool canPassBomb = false;
     private int eliminatedPlayerIndex = -1;
 
@@ -156,7 +156,7 @@ public class LayBomb : MonoBehaviour
         }
     }
 
-    private void ActivateBomb()
+    public void ActivateBomb()
     {
         bombIsActive = true;
 
@@ -175,7 +175,7 @@ public class LayBomb : MonoBehaviour
         }
     }
 
-    private void PassBombToNextPlayer()
+    public void PassBombToNextPlayer()
     {
         if (!canPassBomb) return;
 

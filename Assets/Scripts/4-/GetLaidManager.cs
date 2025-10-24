@@ -1,13 +1,18 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class GetLaidManager : MonoBehaviour
 {
-
+    [SerializeField] private float gameDuration = 10f;
     [SerializeField] private LayEggs[] playerSpawnPoints;
+    public InstructionCountdownIntro instructionCountdownIntro;
+
     void Start()
     {
         PlayerSetup();
+        StartCoroutine(StartGame());
     }
 
     void Update()
@@ -15,16 +20,16 @@ public class GetLaidManager : MonoBehaviour
         
     }
 
-    public void Countdown()
-    {
-
-    }
-    public void ShowInstructionsPanel()
-    {
-
-    }
     public void OnTimerEnd()
     {
+        PlayerData[] playersInGame = GameManager.instance.players;
+        for (int i = 0; i < playersInGame.Length; i++)
+        {
+            PlayerData currentPlayer = playersInGame[i];
+            currentPlayer.playerInputPV.actions["Action"].canceled -= playerSpawnPoints[i].LayEggsInput;
+        }
+
+        //GameManager.instance.AddScoreToPlayer(GetComponent<GetLaidWinner>().DetermineWinner());
 
     }
 
@@ -42,12 +47,14 @@ public class GetLaidManager : MonoBehaviour
 
             PlayerData currentPlayer = playersInGame[i];
             currentPlayer.playerInputPV.actions["Action"].started += playerSpawnPoints[i].LayEggsInput;
-            currentPlayer.playerInputPV.actions["Action"].started += test;
         }
     }
 
-    public void test(InputAction.CallbackContext context)
+    private IEnumerator StartGame()
     {
-        Debug.Log("Test");
+        yield return instructionCountdownIntro.StartCoroutine("Flow");
+        yield return new WaitForSeconds(gameDuration);
+        OnTimerEnd();
     }
+
 }
