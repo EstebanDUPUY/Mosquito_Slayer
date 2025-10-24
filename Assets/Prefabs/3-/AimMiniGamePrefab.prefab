@@ -471,6 +471,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0db3f7031022b58439dd012ef46ac5cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AimMiniGame
+  linkedPlayer: {fileID: 0}
   zoneTopLeft: {fileID: 5986795465755144584}
   zoneBottomRight: {fileID: 3353278483080578091}
   crosshair: {fileID: 9079950561431280097}
@@ -699,7 +700,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 0
   m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
+  m_ScaleFactor: 0.5
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
@@ -1303,7 +1304,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9175129172484450294
 Transform:
   m_ObjectHideFlags: 0
@@ -2037,7 +2038,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00012207031, y: -1.6804199}
+  m_AnchoredPosition: {x: 0, y: -1.6796875}
   m_SizeDelta: {x: 33.6082, y: 43.6907}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1490744189102239946
