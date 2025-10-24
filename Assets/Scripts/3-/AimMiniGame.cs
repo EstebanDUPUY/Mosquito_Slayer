@@ -43,6 +43,9 @@ public class AimMiniGameManager : MonoBehaviour
     public TMP_Text[] shotsTexts = new TMP_Text[4];
     public TMP_Text[] nameTexts = new TMP_Text[4];
 
+    [Header("UI Résultat")]
+    public TMP_Text winnerText; // texte pour afficher le vainqueur
+
     private class AimPlayerRuntime
     {
         public PlayerData data;
@@ -60,10 +63,9 @@ public class AimMiniGameManager : MonoBehaviour
 
     private void Start()
     {
-        // 🧹 Supprimer toutes les caméras parasites et garder la tienne
+        // Nettoyer les caméras parasites et garder ta caméra principale
         KeepOnlyMainCamera();
 
-        // Récupérer les joueurs déjà connectés
         var found = FindObjectsOfType<PlayerData>(true);
         if (found.Length < 2)
         {
@@ -125,7 +127,6 @@ public class AimMiniGameManager : MonoBehaviour
         StartCoroutine(GameLoop());
     }
 
-    // 🔹 Supprime toutes les caméras parasites, garde uniquement celle de ton mini-jeu
     private void KeepOnlyMainCamera()
     {
         Camera mainCam = Camera.main;
@@ -159,6 +160,7 @@ public class AimMiniGameManager : MonoBehaviour
         if (timerText) timerText.text = "";
 
         UpdateAllScoreUI();
+        AnnounceWinner(); // <--- nouvelle fonction pour afficher le vainqueur
     }
 
     private IEnumerator PlayRound(int roundNumber)
@@ -256,12 +258,57 @@ public class AimMiniGameManager : MonoBehaviour
     private void UpdateShotsUI(AimPlayerRuntime p)
     {
         if (p.index >= 0 && p.index < shotsTexts.Length && shotsTexts[p.index] != null)
-            shotsTexts[p.index].text = $"Piqûres: {p.shotsRemaining}";
+            shotsTexts[p.index].text = $"J{p.index + 1}: {p.shotsRemaining} piqûres";
     }
 
     private void UpdateAllScoreUI()
     {
         foreach (var p in players) UpdateScoreUI(p);
+    }
+
+    private void AnnounceWinner()
+    {
+        if (players.Count == 0)
+        {
+            if (winnerText) winnerText.text = "Aucun joueur détecté.";
+            return;
+        }
+
+        int bestScore = int.MinValue;
+        List<AimPlayerRuntime> winners = new List<AimPlayerRuntime>();
+
+        foreach (var p in players)
+        {
+            if (p.score > bestScore)
+            {
+                bestScore = p.score;
+                winners.Clear();
+                winners.Add(p);
+            }
+            else if (p.score == bestScore)
+            {
+                winners.Add(p);
+            }
+        }
+
+        if (winners.Count == 1)
+        {
+            int id = winners[0].index + 1;
+            if (winnerText) winnerText.text = $"Joueur {id} remporte la manche avec {bestScore} points !";
+            if (infoText) infoText.text = $"Victoire du Joueur {id} !";
+        }
+        else
+        {
+            string msg = "Égalité entre ";
+            for (int i = 0; i < winners.Count; i++)
+            {
+                msg += $"J{winners[i].index + 1}";
+                if (i < winners.Count - 1) msg += ", ";
+            }
+            msg += $" avec {bestScore} points !";
+            if (winnerText) winnerText.text = msg;
+            if (infoText) infoText.text = "Égalité !";
+        }
     }
 
     private Vector3 GetRandomPointInZone()
