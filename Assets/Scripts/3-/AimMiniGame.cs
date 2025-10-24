@@ -1,205 +1,298 @@
 ﻿using UnityEngine;
-using TMPro;
 using UnityEngine.InputSystem;
+using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI; // pour gérer les images UI
 
 public class AimMiniGame : MonoBehaviour
 {
-    [Header("Références")]
-    public Transform human;
+    [Header("Références UI")]
+    public Transform zoneTopLeft;
+    public Transform zoneBottomRight;
     public Transform crosshair;
+    public HumanTarget human;
     public TMP_Text infoText;
     public TMP_Text timerText;
     public TMP_Text scoreText;
+    public TMP_Text shotsText;
 
-    [Header("Zones piquables")]
-    public List<Transform> targetZones = new List<Transform>();
+    [Header("UI Visuelle des piqûres")]
+    public GameObject mosquitoIconPrefab; // prefab du moustique
+    public Transform bitesContainer;       // conteneur UI en bas à droite
+    public int maxIcons = 3;               // nombre max d’icônes
 
-    [Header("Zones limites (fallback)")]
-    public Transform zoneTopLeft;
-    public Transform zoneBottomRight;
+    private List<GameObject> mosquitoIcons = new List<GameObject>();
 
     [Header("Paramètres de jeu")]
     public float moveSpeed = 3f;
+    public float moveInterval = 1.2f;
     public float roundDuration = 5f;
     public int totalRounds = 3;
     public int maxShotsPerRound = 3;
+    public float shootCooldown = 0.5f;
 
-    [Header("Sabotage")]
-    public float sabotageDuration = 1f;
-    public float sabotageIntensity = 0.5f;
-    public float sabotageCooldown = 5f;
+    [Header("Zones piquables")]
+    public List<TargetZone> targetZones = new List<TargetZone>();
+    [Range(0f, 1f)] public float chanceToGoNearTarget = 0.75f;
+    public float offsetAroundTarget = 0.5f;
 
-    private float timer;
+    private MoskilltoControls controls;
+    private bool isPerturbed = false;
+    private bool canShoot = true;
+    private float playerScore = 0;
+
+    private Vector3 currentTarget;
+    private float moveTimer = 0f;
+    private int shotsRemaining;
     private int currentRound = 1;
-    private bool isRunning = false;
-    private bool isSabotaged = false;
-    private bool canSabotage = true;
-    private int shotsUsed = 0;
-    private int score = 0;
+    private float lastShootTime = -999f;
 
-    private int currentTargetIndex = 0;
+    private SpriteRenderer crosshairRenderer;
+    private Color crosshairBaseColor;
 
-    // ----------------------------------------------------------
-    void OnEnable()
+    private void Awake()
     {
-        // Démarre automatiquement dès activation du GameObject
-        ResetGame();
-        StartCoroutine(StartMiniGame());
+        controls = new MoskilltoControls();
     }
 
-    private IEnumerator StartMiniGame()
+    private void OnEnable()
     {
-        yield return new WaitForSeconds(0.5f);
-        StartRound();
+        controls.MiniGame_Aim.Enable();
+        controls.MiniGame_Aim.Shoot.performed += OnShoot;
+        controls.MiniGame_Aim.Sabotage.performed += OnSabotage;
     }
 
-    private void StartRound()
+    private void OnDisable()
     {
-        isRunning = true;
-        timer = roundDuration;
-        shotsUsed = 0;
-        infoText.text = $"Manche {currentRound}/{totalRounds}";
+        controls.MiniGame_Aim.Shoot.performed -= OnShoot;
+        controls.MiniGame_Aim.Sabotage.performed -= OnSabotage;
+        controls.MiniGame_Aim.Disable();
     }
 
-    private void EndRound()
+    private void Start()
     {
-        isRunning = false;
-        currentRound++;
+        crosshairRenderer = crosshair.GetComponent<SpriteRenderer>();
+        if (crosshairRenderer != null)
+            crosshairBaseColor = crosshairRenderer.color;
 
-        if (currentRound > totalRounds)
-            EndGame();
-        else
-            StartCoroutine(NextRoundDelay());
+        SetupMosquitoIcons();
+        StartCoroutine(GameLoop());
     }
 
-    private IEnumerator NextRoundDelay()
+    // Génère les icônes moustiques dans le conteneur
+    private void SetupMosquitoIcons()
     {
-        infoText.text = "Préparez-vous pour la prochaine manche...";
-        yield return new WaitForSeconds(2f);
-        StartRound();
-    }
-
-    private void EndGame()
-    {
-        isRunning = false;
-        infoText.text = "Fin du mini-jeu !";
-        scoreText.text = $"Score total : {score}";
-    }
-
-    // ----------------------------------------------------------
-    void Update()
-    {
-        if (!isRunning) return;
-
-        timer -= Time.deltaTime;
-        timerText.text = timer.ToString("F1") + "s";
-
-        if (timer <= 0)
+        if (mosquitoIconPrefab == null || bitesContainer == null)
         {
-            EndRound();
             return;
         }
-
-        MoveCrosshair();
+        for (int i = 0; i < maxIcons; i++)
+        {
+            GameObject icon = Instantiate(mosquitoIconPrefab, bitesContainer);
+            mosquitoIcons.Add(icon);
+        }
     }
 
-    // ----------------------------------------------------------
-    private void MoveCrosshair()
+    // Actualise les icônes selon le nombre de tirs restants
+    private void UpdateBiteIcons()
     {
-        if (isSabotaged)
+        for (int i = 0; i < mosquitoIcons.Count; i++)
         {
-            Vector3 randomOffset = new Vector3(
-                Random.Range(-sabotageIntensity, sabotageIntensity),
-                Random.Range(-sabotageIntensity, sabotageIntensity),
-                0
-            );
-            crosshair.position += randomOffset * Time.deltaTime * 20f;
-            return;
+            mosquitoIcons[i].SetActive(i < shotsRemaining);
+        }
+    }
+
+    // Boucle générale du mini-jeu
+    private IEnumerator GameLoop()
+    {
+        if (infoText) infoText.text = "Prépare-toi...";
+        yield return new WaitForSeconds(1.2f);
+        if (infoText) infoText.text = "";
+
+        for (currentRound = 1; currentRound <= totalRounds; currentRound++)
+        {
+            yield return StartCoroutine(PlayRound(currentRound));
+            yield return new WaitForSeconds(1f);
         }
 
-        if (targetZones != null && targetZones.Count > 0)
-        {
-            Transform targetZone = targetZones[currentTargetIndex];
-            Vector3 wander = targetZone.position + (Vector3)(Random.insideUnitCircle * 0.2f);
-            crosshair.position = Vector3.MoveTowards(crosshair.position, wander, moveSpeed * Time.deltaTime);
+        if (infoText)
+            infoText.text = $"Fin du mini-jeu ! Score final : {playerScore}";
+        if (scoreText)
+            scoreText.text = $"Score : {playerScore}";
+    }
 
-            if (Vector2.Distance(crosshair.position, targetZone.position) < 0.1f)
+    // Une manche complète
+    private IEnumerator PlayRound(int round)
+    {
+        shotsRemaining = maxShotsPerRound;
+        canShoot = true;
+        moveTimer = 0f;
+        float t = 0f;
+
+        if (crosshair) crosshair.gameObject.SetActive(true);
+        if (infoText) infoText.text = $"Manche {round}";
+        UpdateShotsUI();
+        UpdateBiteIcons();
+
+        currentTarget = GetRandomPointInZone();
+
+        if (human != null)
+            human.StartJumpsForRound(roundDuration);
+
+        while (t < roundDuration)
+        {
+            t += Time.deltaTime;
+            moveTimer -= Time.deltaTime;
+
+            if (timerText)
+                timerText.text = $"{Mathf.Ceil(roundDuration - t)} secs restantes";
+
+            if (moveTimer <= 0f)
             {
-                currentTargetIndex = Random.Range(0, targetZones.Count);
+                currentTarget = GetRandomPointInZone();
+                moveTimer = moveInterval;
+            }
+
+            Vector3 nextPos = Vector3.Lerp(crosshair.position, currentTarget, Time.deltaTime * moveSpeed);
+            if (isPerturbed) nextPos += (Vector3)Random.insideUnitCircle * 0.1f;
+
+            float minX = zoneTopLeft.position.x;
+            float maxX = zoneBottomRight.position.x;
+            float maxY = zoneTopLeft.position.y;
+            float minY = zoneBottomRight.position.y;
+            nextPos.x = Mathf.Clamp(nextPos.x, minX, maxX);
+            nextPos.y = Mathf.Clamp(nextPos.y, minY, maxY);
+
+            crosshair.position = nextPos;
+            yield return null;
+        }
+
+        if (infoText)
+            infoText.text = $"Manche {round} terminée !";
+    }
+
+    // Quand le joueur tire
+    private void OnShoot(InputAction.CallbackContext ctx)
+    {
+        if (!canShoot || shotsRemaining <= 0) return;
+
+        if (Time.time - lastShootTime < shootCooldown)
+        {
+            if (infoText) infoText.text = "Recharge...";
+            return;
+        }
+        lastShootTime = Time.time;
+
+        shotsRemaining--;
+        UpdateShotsUI();
+        UpdateBiteIcons();
+
+        Vector2 origin = crosshair.position;
+        Collider2D hit = Physics2D.OverlapPoint(origin);
+
+        if (hit != null)
+        {
+            TargetZone zone = hit.GetComponent<TargetZone>();
+            if (zone != null)
+            {
+                int pts = zone.GetScore(origin);
+                playerScore += pts;
+
+                if (human != null)
+                    human.OnBitten();
+
+                if (infoText)
+                    infoText.text = $"Touché : {zone.zoneName} (+{pts})";
+
+                StartCoroutine(FlashCrosshair(Color.red));
+            }
+            else
+            {
+                if (infoText) infoText.text = "Raté !";
+                StartCoroutine(FlashCrosshair(Color.gray));
             }
         }
         else
         {
-            Vector2 min = zoneTopLeft.position;
-            Vector2 max = zoneBottomRight.position;
-            Vector3 fallbackTarget = new Vector3(
-                Mathf.Lerp(min.x, max.x, Mathf.PerlinNoise(Time.time * 0.5f, 0)),
-                Mathf.Lerp(min.y, max.y, Mathf.PerlinNoise(0, Time.time * 0.5f)),
-                0
-            );
-            crosshair.position = Vector3.Lerp(crosshair.position, fallbackTarget, Time.deltaTime * moveSpeed);
+            if (infoText) infoText.text = "Raté !";
+            StartCoroutine(FlashCrosshair(Color.gray));
+        }
+
+        if (scoreText)
+            scoreText.text = $"Score : {playerScore}";
+
+        if (shotsRemaining <= 0)
+        {
+            canShoot = false;
+            if (crosshair) crosshair.gameObject.SetActive(false);
+            StartCoroutine(ReloadNextRound());
         }
     }
 
-    // ----------------------------------------------------------
-    public void OnShoot(InputAction.CallbackContext context)
+    // Feedback visuel du viseur
+    private IEnumerator FlashCrosshair(Color flashColor, float duration = 0.15f)
     {
-        //Debug.Log("OnShoot déclenché !");
-        if (!context.performed || !isRunning) return;
-        if (shotsUsed >= maxShotsPerRound) return;
+        if (crosshairRenderer == null) yield break;
 
-        shotsUsed++;
-
-        float dist = Vector2.Distance(crosshair.position, human.position);
-        int points = CalculateScore(dist);
-        score += points;
-
-        infoText.text = $"Touché ! +{points}";
-        scoreText.text = $"Score : {score}";
+        crosshairRenderer.color = flashColor;
+        yield return new WaitForSeconds(duration);
+        crosshairRenderer.color = crosshairBaseColor;
     }
 
-    public void OnSabotage(InputAction.CallbackContext context)
+    // Texte affichant les piqûres restantes
+    private void UpdateShotsUI()
     {
-        if (!context.performed || !canSabotage) return;
-        StartCoroutine(SabotageRoutine());
+        if (shotsText)
+            shotsText.text = $"{shotsRemaining} piqûres restantes";
     }
 
-    private IEnumerator SabotageRoutine()
+    // Recharge entre deux manches
+    private IEnumerator ReloadNextRound()
     {
-        canSabotage = false;
-        isSabotaged = true;
-        infoText.text = "Sabotage !";
-
-        yield return new WaitForSeconds(sabotageDuration);
-
-        isSabotaged = false;
-        infoText.text = "";
-
-        yield return new WaitForSeconds(sabotageCooldown);
-        canSabotage = true;
+        if (infoText) infoText.text = "Manche terminée, préparation...";
+        yield return new WaitForSeconds(1f);
+        canShoot = true;
     }
 
-    // ----------------------------------------------------------
-    private int CalculateScore(float distance)
+    // Sabotage (perturbation)
+    private void OnSabotage(InputAction.CallbackContext ctx)
     {
-        if (distance < 0.2f) return 5;
-        if (distance < 0.4f) return 4;
-        if (distance < 0.6f) return 3;
-        if (distance < 0.8f) return 2;
-        if (distance < 1.0f) return 1;
-        return 0;
+        if (!isPerturbed)
+            StartCoroutine(Perturbation());
     }
 
-    private void ResetGame()
+    private IEnumerator Perturbation()
     {
-        currentRound = 1;
-        score = 0;
-        shotsUsed = 0;
-        isSabotaged = false;
-        canSabotage = true;
-        infoText.text = "";
-        scoreText.text = "Score : 0";
+        isPerturbed = true;
+        yield return new WaitForSeconds(1.5f);
+        isPerturbed = false;
+    }
+
+    // Génération d’un point aléatoire dans la zone
+    private Vector3 GetRandomPointInZone()
+    {
+        float minX = zoneTopLeft.position.x;
+        float maxX = zoneBottomRight.position.x;
+        float maxY = zoneTopLeft.position.y;
+        float minY = zoneBottomRight.position.y;
+
+        if (targetZones.Count > 0 && Random.value < chanceToGoNearTarget)
+        {
+            TargetZone chosen = targetZones[Random.Range(0, targetZones.Count)];
+            Vector3 around = chosen.transform.position;
+
+            float offsetX = Random.Range(-offsetAroundTarget, offsetAroundTarget);
+            float offsetY = Random.Range(-offsetAroundTarget, offsetAroundTarget);
+
+            Vector3 nearTarget = around + new Vector3(offsetX, offsetY, 0);
+            nearTarget.x = Mathf.Clamp(nearTarget.x, minX, maxX);
+            nearTarget.y = Mathf.Clamp(nearTarget.y, minY, maxY);
+            return nearTarget;
+        }
+
+        float x = Random.Range(minX, maxX);
+        float y = Random.Range(minY, maxY);
+        return new Vector3(x, y, crosshair.position.z);
     }
 }
