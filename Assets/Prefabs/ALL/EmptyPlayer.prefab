@@ -186,6 +186,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 0a288856-acdc-4bbb-8768-b190265a8663
     m_ActionName: 'Player/BlindEnemies[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3878f674-2af7-45df-8320-db5a6ffa0027
+    m_ActionName: 'Player/Action[/Keyboard/e,/XInputControllerWindows/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 70137524-070a-494c-a628-167ec2558047
+    m_ActionName: 'Player/Sabo[/Keyboard/q,/XInputControllerWindows/buttonEast]'
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

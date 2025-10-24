@@ -249,6 +249,7 @@ MonoBehaviour:
   tickSound: {fileID: 0}
   explosionSound: {fileID: 0}
   passSound: {fileID: 0}
+  bombIsActive: 0
 --- !u!1 &325307438
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,6 +378,9 @@ MonoBehaviour:
   eggCount: 0
   whereShouldEggBe: {x: 10, y: 10}
   wherePlayerIs: {fileID: 0}
+  hasBomb: 0
+  throwBombMdr: {fileID: 311401193}
+  linkZelda: {fileID: 0}
 --- !u!61 &744810025
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -471,6 +475,9 @@ MonoBehaviour:
   eggCount: 0
   whereShouldEggBe: {x: 10, y: 10}
   wherePlayerIs: {fileID: 0}
+  hasBomb: 0
+  throwBombMdr: {fileID: 311401193}
+  linkZelda: {fileID: 0}
 --- !u!1 &784641596
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,6 +527,9 @@ MonoBehaviour:
   eggCount: 0
   whereShouldEggBe: {x: 10, y: 10}
   wherePlayerIs: {fileID: 0}
+  hasBomb: 0
+  throwBombMdr: {fileID: 311401193}
+  linkZelda: {fileID: 0}
 --- !u!61 &784641599
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -724,6 +734,7 @@ MonoBehaviour:
   - {fileID: 745503048}
   - {fileID: 1314671323}
   instructionCountdownIntro: {fileID: 1348441238}
+  layBombMdr: {fileID: 311401193}
 --- !u!1 &884941146
 GameObject:
   m_ObjectHideFlags: 0
@@ -1089,6 +1100,9 @@ MonoBehaviour:
   eggCount: 0
   whereShouldEggBe: {x: 10, y: 10}
   wherePlayerIs: {fileID: 0}
+  hasBomb: 0
+  throwBombMdr: {fileID: 311401193}
+  linkZelda: {fileID: 0}
 --- !u!1001 &1348441237
 PrefabInstance:
   m_ObjectHideFlags: 0
