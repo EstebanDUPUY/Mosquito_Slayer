@@ -120,6 +120,9 @@ public class PlayerSucc : MonoBehaviour
         IsAlive = true; IsSuccing = false; OnGroundSuck = true; InDeathZone = false;
         Points = 0; Attention = 0f; MaxPoints = targetScore; iFrameUntil = 0f;
         sabotageReadyAt = 0f;
+
+        SurvivorRegistry.Register(this); // ADD : je (re)deviens vivant globalement
+
     }
 
     public void AddPoints(int delta) //on ajoute des points de sang pour le joueur quand il suce avec une limite max
@@ -138,6 +141,8 @@ public class PlayerSucc : MonoBehaviour
     {
         IsAlive = false;
         IsSuccing = false;
+        Manager?.OnPlayerDied(this);
+        SurvivorRegistry.Died(this); // ADD : annonce globale "je suis mort"
     }
 
     void OnTriggerEnter2D(Collider2D other)

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    private PlayerData[] players;
+    public PlayerData[] players;
     private int miniGamesPlayed;
     private List<int> playedGames;
     [SerializeField] private List<int> nonPlayedGames;

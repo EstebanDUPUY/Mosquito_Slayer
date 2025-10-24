@@ -46,13 +46,54 @@ public class LaneManager : MonoBehaviour
                 ln.manager.StartRound();
             }
         }
+        StartAllLanes(); // CHANGE : on lance toutes les lanes proprement (reset global + start)
 
+    }
+
+    private void OnEnable() // ADD : écouter l’événement “dernier survivant”
+    {
+        SurvivorRegistry.OnLastSurvivor += OnLastSurvivor;
+    }
+
+    private void OnDisable() // ADD : propre désabonnement
+    {
+        SurvivorRegistry.OnLastSurvivor -= OnLastSurvivor;
     }
 
     #endregion
 
-    
+
     #region OTHER FUNCTIONS
+
+
+    public void StartAllLanes()
+    {
+        // Reset global des survivants UNE SEULE FOIS pour ce round
+        SurvivorRegistry.Reset();
+
+        // Lancer chaque lane (chaque SuccManager.ResetState() enregistrera le joueur dans le registre)
+        foreach (var ln in lanes)
+        {
+            if (ln != null && ln.manager != null)
+            {
+                ln.manager.StartRound();
+            }
+        }
+    }
+
+    // ADD : quand il ne reste plus qu’un vivant, on arrête proprement TOUTES les lanes
+    private void OnLastSurvivor(PlayerSucc winner)
+    {
+        foreach (var ln in lanes)
+        {
+            if (ln != null && ln.manager != null)
+            {
+                // Chaque SuccManager s’occupe d’afficher la WIN uniquement
+                // si le winner appartient à SA lane (via Owns(winner) côté manager).
+                ln.manager.EndRoundLocal(winner);
+            }
+        }
+    }
 
     private void SetupPlayersOnLanes()
     {

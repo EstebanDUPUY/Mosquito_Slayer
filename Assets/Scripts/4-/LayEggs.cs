@@ -8,14 +8,12 @@ public class LayEggs : MonoBehaviour
     public GameObject eggsGO;
     [SerializeField] private int eggCount;
     [SerializeField] private Vector2 whereShouldEggBe = new Vector2(10, 10);
-    [SerializeField] private Transform wherePlayerIs;
+    public Transform wherePlayerIs;
 
     public void LayEggsInput(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
-        {
-            Instantiate(eggsGO, wherePlayerIs.position + (Vector3)whereShouldEggBe, Quaternion.identity, wherePlayerIs);
-            eggCount++;
-        }
+        Debug.Log($"[INPUT] P{wherePlayerIs.GetComponent<PlayerData>().myDeviceIdPV} LAY EGG");
+        Instantiate(eggsGO, wherePlayerIs.position + (Vector3)whereShouldEggBe, Quaternion.identity, transform);
+        eggCount++;
     }
 }

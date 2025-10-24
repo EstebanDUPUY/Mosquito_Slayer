@@ -62,5 +62,7 @@ public class PlayerJoinManager : MonoBehaviour
         GameManager.instance.AvengersStartGame();
     }
 
+
+
 }
 

@@ -35,7 +35,8 @@ public class SuccManager : MonoBehaviour
 
     // timers
     float tickTimer, attackTimer, elapsed;
-    bool roundOver;
+    bool roundOver = false;                      
+    public bool RoundOver => roundOver;           
     private Coroutine tickCo;
     float[] _decayAcc;
     // --- Planning stochastique des attaques ---
@@ -43,6 +44,14 @@ public class SuccManager : MonoBehaviour
     [SerializeField] float minGapAfterAttack = 0.6f; // gap mini entre deux séquences
     float _nextAttackAt = -1f;                       // horodatage du prochain tirage
 
+    static bool s_registryResetThisScene = false; // ADD
+    bool Owns(PlayerSucc p)                        // ADD
+    {
+        if (p == null || players == null) return false;
+        for (int i = 0; i < players.Length; i++)
+            if (players[i] == p) return true;
+        return false;
+    }
 
     #endregion
 
@@ -97,9 +106,13 @@ public class SuccManager : MonoBehaviour
 
 
     #endregion
-
+    void OnEnable()                                // ADD
+    {
+        SurvivorRegistry.OnLastSurvivor += OnLastSurvivorGlobal;
+    }
     void OnDisable()
     {
+        SurvivorRegistry.OnLastSurvivor -= OnLastSurvivorGlobal;
         if (tickCo != null) StopCoroutine(tickCo); //si on désactive l'objet, on arrête la coroutine de tics
     }
 
@@ -165,6 +178,12 @@ public class SuccManager : MonoBehaviour
     public void StartRound()
     {
         roundOver = false; //la manche commence 
+
+        if (!s_registryResetThisScene)             // ADD
+        {
+            SurvivorRegistry.Reset();              // ADD
+            s_registryResetThisScene = true;       // ADD
+        }
         elapsed = attackTimer = 0f; //on remet les timers à zéro
         hud?.ResetAll(); //on reset le HUD
 
@@ -193,6 +212,26 @@ public class SuccManager : MonoBehaviour
         hud?.ShowWinner(winner.Index); //on affiche le panel de victoire pour le gagnant
     }
 
+    public void EndRoundLocal(PlayerSucc winner)   // ADD
+    {
+        if (roundOver) return;
+        roundOver = true;
+
+        // stoppe ce que tu veux (tick, human, laser…)
+        if (tickCo != null) { StopCoroutine(tickCo); tickCo = null; }
+        //laneLaser?.StopNow();  // si tu as une ref laser par lane
+
+        // Affiche la victoire uniquement si "winner" est un joueur de CETTE lane
+        if (winner != null && Owns(winner))
+            hud?.ShowWinner(winner.Index);
+        // sinon : ne rien afficher (l’autre lane du gagnant montrera la win)
+    }
+
+    void OnLastSurvivorGlobal(PlayerSucc winner)   // ADD
+    {
+        if (roundOver) return;
+        EndRoundLocal(winner);                     // on arrête CETTE lane proprement
+    }
 
     public void ResolveAttack()
     {
@@ -270,6 +309,11 @@ public class SuccManager : MonoBehaviour
         }
     }
 
+    public void OnPlayerDied(PlayerSucc p)     
+    {
+        if (roundOver || p == null) return;
+        hud?.SetDead(p.Index);                    
+    }
     void CheckLastAlive()
     {
         PlayerSucc last = null; int alive = 0; //Compte les vivants et garde le dernier trouvé
