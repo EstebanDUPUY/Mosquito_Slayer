@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ public class GameManager : MonoBehaviour
     }
     public void AddScoreToPlayer(PlayerData winner)
     {
-        if (winner != null /*win*/) winner.scorePV++;
+        if (winner != null) winner.scorePV++;
     }
     private void ChangeScene(int nextScene)
     {
@@ -81,3 +82,4 @@ public class GameManager : MonoBehaviour
         }
     }
 }
+

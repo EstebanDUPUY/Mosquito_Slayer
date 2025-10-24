@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,3 +20,4 @@ public class PlayerData : MonoBehaviour
         spriteRendererRef = GetComponent<SpriteRenderer>();
     }
 }
+
