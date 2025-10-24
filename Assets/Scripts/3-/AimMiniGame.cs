@@ -44,7 +44,7 @@ public class AimMiniGameManager : MonoBehaviour
     public TMP_Text[] nameTexts = new TMP_Text[4];
 
     [Header("UI Résultat")]
-    public TMP_Text winnerText; // texte pour afficher le vainqueur
+    public TMP_Text winnerText;
 
     private class AimPlayerRuntime
     {
@@ -160,7 +160,8 @@ public class AimMiniGameManager : MonoBehaviour
         if (timerText) timerText.text = "";
 
         UpdateAllScoreUI();
-        AnnounceWinner(); // <--- nouvelle fonction pour afficher le vainqueur
+        AnnounceWinner();
+        HideShotsTexts(); // <-- on cache les compteurs de piqûres ici
     }
 
     private IEnumerator PlayRound(int roundNumber)
@@ -308,6 +309,15 @@ public class AimMiniGameManager : MonoBehaviour
             msg += $" avec {bestScore} points !";
             if (winnerText) winnerText.text = msg;
             if (infoText) infoText.text = "Égalité !";
+        }
+    }
+
+    private void HideShotsTexts()
+    {
+        foreach (var txt in shotsTexts)
+        {
+            if (txt != null)
+                txt.gameObject.SetActive(false);
         }
     }
 
