@@ -178,6 +178,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 24a1c45e-899f-470e-9289-c29d3503b717
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 55db1a5e-d776-4e5c-8905-75c6da1b412f
+    m_ActionName: 'Player/Suck[/Keyboard/e]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0a288856-acdc-4bbb-8768-b190265a8663
+    m_ActionName: 'Player/BlindEnemies[/Keyboard/q]'
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -198,6 +206,8 @@ MonoBehaviour:
   playerSpritePV: {fileID: 0}
   playerInputPV: {fileID: 7621683843735299182}
   myDeviceIdPV: 0
+  spriteRendererRef: {fileID: 8521034002466538593}
+  scorePV: 0
 --- !u!1 &5061734389069464172
 GameObject:
   m_ObjectHideFlags: 0
@@ -241,8 +251,8 @@ Camera:
   m_GameObject: {fileID: 5061734389069464172}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.5169811, g: 0.2682449, b: 0.28199178, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

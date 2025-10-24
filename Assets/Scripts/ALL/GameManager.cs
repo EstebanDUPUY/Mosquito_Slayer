@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
@@ -6,10 +7,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     private PlayerData[] players;
-    private PlayerData currentPlayer;
     private int miniGamesPlayed;
     private List<int> playedGames;
-    private List<int> nonPlayedGames;
+    [SerializeField] private List<int> nonPlayedGames;
 
     private void Awake()
     {
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
     }
     public void AddScoreToPlayer(PlayerData winner)
     {
-        if (winner != null /*win*/) winner.scorePV++;
+        if (winner != null) winner.scorePV++;
     }
     private void ChangeScene(int nextScene)
     {
@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
             {
                 gameIndex = Random.Range(0, nonPlayedGames.Count);
             }
-            ChangeScene(gameIndex);
+            ChangeScene(nonPlayedGames[gameIndex]);
             playedGames.Add(gameIndex); 
            
         }
@@ -82,3 +82,4 @@ public class GameManager : MonoBehaviour
         }
     }
 }
+
