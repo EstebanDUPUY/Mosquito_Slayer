@@ -162,6 +162,10 @@ PrefabInstance:
       propertyPath: 'players.Array.data[0]'
       value: 
       objectReference: {fileID: 1355193952}
+    - target: {fileID: 988497068445653217, guid: ad5742ddcc46b744eac1dbdfd79e80d3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3664784623716640030, guid: ad5742ddcc46b744eac1dbdfd79e80d3, type: 3}
       propertyPath: m_ScaleFactor
       value: 0.5
@@ -599,6 +603,10 @@ PrefabInstance:
       propertyPath: 'players.Array.data[0]'
       value: 
       objectReference: {fileID: 1457612842}
+    - target: {fileID: 988497068445653217, guid: ad5742ddcc46b744eac1dbdfd79e80d3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3664784623716640030, guid: ad5742ddcc46b744eac1dbdfd79e80d3, type: 3}
       propertyPath: m_ScaleFactor
       value: 0.5
@@ -812,6 +820,10 @@ PrefabInstance:
       propertyPath: 'players.Array.data[0]'
       value: 
       objectReference: {fileID: 712570765}
+    - target: {fileID: 988497068445653217, guid: ad5742ddcc46b744eac1dbdfd79e80d3, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3664784623716640030, guid: ad5742ddcc46b744eac1dbdfd79e80d3, type: 3}
       propertyPath: m_ScaleFactor
       value: 0.5
