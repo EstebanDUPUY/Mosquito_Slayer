@@ -6,10 +6,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     private PlayerData[] players;
-    private PlayerData currentPlayer;
     private int miniGamesPlayed;
     private List<int> playedGames;
-    private List<int> nonPlayedGames;
+    [SerializeField] private List<int> nonPlayedGames;
 
     private void Awake()
     {
@@ -72,7 +71,7 @@ public class GameManager : MonoBehaviour
             {
                 gameIndex = Random.Range(0, nonPlayedGames.Count);
             }
-            ChangeScene(gameIndex);
+            ChangeScene(nonPlayedGames[gameIndex]);
             playedGames.Add(gameIndex); 
            
         }
