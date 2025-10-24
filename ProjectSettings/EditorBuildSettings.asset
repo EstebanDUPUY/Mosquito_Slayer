@@ -11,18 +11,21 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SelectionScene.unity
     guid: 5aed25bc615bad44d82ca9bfdc6f4723
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/1-SUCC.unity
     guid: 94093a6a931dba34baa9cfe733c5b440
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/2-ESCAPE_THE_SWAT.unity
     guid: 91eea622f01557c47bffd4c451e32bb5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/3-AIMSQUITO.unity
     guid: 5d888b4f1a3c1764b98f7ad42d3b0676
   - enabled: 1
     path: Assets/Scenes/4-GET_LAID.unity
     guid: 6e4a6f3c4de9d1940bc308b5b4212b9e
+  - enabled: 1
+    path: Assets/Scenes/FinalScore.unity
+    guid: 7ac22a7e82f996d45937b091dd8a81b6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: f48f399be3514d7478715cbc5914f9be, type: 3}
   m_UseUCBPForAssetBundles: 0
