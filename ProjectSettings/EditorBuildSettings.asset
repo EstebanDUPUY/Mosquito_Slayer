@@ -11,13 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SelectionScene.unity
     guid: 5aed25bc615bad44d82ca9bfdc6f4723
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/1-SUCC.unity
     guid: 94093a6a931dba34baa9cfe733c5b440
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/2-ESCAPE_THE_SWAT.unity
     guid: 91eea622f01557c47bffd4c451e32bb5
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/3-AIMSQUITO.unity
     guid: 5d888b4f1a3c1764b98f7ad42d3b0676
   - enabled: 1
