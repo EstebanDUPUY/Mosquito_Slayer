@@ -28,10 +28,21 @@ public class LaneManager : MonoBehaviour
     [Header("Caméras - padding")]
     [SerializeField] private float camViewportPadding = 0f; // 0..0.02 si tu veux des petits espaces
 
+    public static LaneManager Instance { get; private set; }
+    private readonly System.Collections.Generic.List<PlayerSucc> _allPlayers = new System.Collections.Generic.List<PlayerSucc>();
+    private bool _roundEnded = false;
+
+
     #endregion
 
-    
+
     #region START/UPDATE
+
+    private void Awake()
+    {
+        if (Instance && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -94,6 +105,17 @@ public class LaneManager : MonoBehaviour
             }
         }
     }
+
+    public void RegisterPlayer(PlayerSucc p)
+    {
+        if (p == null) return;
+        if (!_allPlayers.Contains(p))
+        {
+            _allPlayers.Add(p);
+            // Debug.Log("[LaneManager] RegisterPlayer " + p.name);
+        }
+    }
+
 
     private void SetupPlayersOnLanes()
     {
@@ -235,6 +257,65 @@ public class LaneManager : MonoBehaviour
             idx++;
         }
     }
+
+    public void NotifyDeath(PlayerSucc justDied)
+    {
+        if (_roundEnded) return;
+
+        // Compter les vivants
+        int alive = 0;
+        PlayerSucc lastAlive = null;
+
+        foreach (var p in _allPlayers)
+        {
+            if (p != null && p.IsAlive)
+            {
+                alive++;
+                lastAlive = p;
+            }
+        }
+
+        // Debug.Log($"[LaneManager] NotifyDeath -> alive={alive}");
+
+        if (alive <= 1)
+        {
+            _roundEnded = true;
+
+            // Stoppe toutes les lanes
+            foreach (var ln in lanes)
+            {
+                if (ln == null || ln.manager == null) continue;
+                ln.manager.EndRoundLocal(lastAlive); // on passe le survivant potentiel
+            }
+
+            // Option: désactiver tous les inputs pour geler proprement
+            var allInputs = FindObjectsOfType<PlayerInput>();
+            foreach (var pi in allInputs)
+            {
+                if (pi) pi.enabled = false;
+            }
+        }
+    }
+
+    public void ForceWin(PlayerSucc winner)
+    {
+        if (_roundEnded) return;
+        _roundEnded = true;
+
+        foreach (var ln in lanes)
+        {
+            if (ln == null || ln.manager == null) continue;
+            ln.manager.EndRoundLocal(winner);
+        }
+
+        // freeze les inputs
+        var allInputs = FindObjectsOfType<PlayerInput>();
+        foreach (var pi in allInputs)
+        {
+            if (pi) pi.enabled = false;
+        }
+    }
+
 
     private Rect PaddedRect(Rect r)
     {
