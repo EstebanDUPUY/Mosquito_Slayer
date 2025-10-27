@@ -333,9 +333,9 @@ public class AimMiniGameManager : MonoBehaviour
         }
 
         // Pour test : on charge directement la scène Score
-        SceneManager.LoadScene("FinalScore");
+        //SceneManager.LoadScene("FinalScore");
         // Et pour la version finale du Party Game :
-        // GameManager.instance.NextMiniGame();
+         GameManager.instance.NextMiniGame();
     }
 
     private void HideShotsTexts()
