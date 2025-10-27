@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class AimMiniGameManager : MonoBehaviour
 {
@@ -63,7 +64,6 @@ public class AimMiniGameManager : MonoBehaviour
 
     private void Start()
     {
-        // Nettoyer les caméras parasites et garder ta caméra principale
         KeepOnlyMainCamera();
 
         var found = FindObjectsOfType<PlayerData>(true);
@@ -161,7 +161,7 @@ public class AimMiniGameManager : MonoBehaviour
 
         UpdateAllScoreUI();
         AnnounceWinner();
-        HideShotsTexts(); // <-- on cache les compteurs de piqûres ici
+        HideShotsTexts();
     }
 
     private IEnumerator PlayRound(int roundNumber)
@@ -297,6 +297,9 @@ public class AimMiniGameManager : MonoBehaviour
             int id = winners[0].index + 1;
             if (winnerText) winnerText.text = $"Joueur {id} remporte la manche avec {bestScore} points !";
             if (infoText) infoText.text = $"Victoire du Joueur {id} !";
+
+            // Appel automatique de la fin de partie
+            StartCoroutine(DelayedEnd(winners[0]));
         }
         else
         {
@@ -309,7 +312,30 @@ public class AimMiniGameManager : MonoBehaviour
             msg += $" avec {bestScore} points !";
             if (winnerText) winnerText.text = msg;
             if (infoText) infoText.text = "Égalité !";
+
+            // On ne sauvegarde rien en cas d'égalité (à toi de décider si tu veux changer ça)
+            StartCoroutine(DelayedEnd(null));
         }
+    }
+
+    private IEnumerator DelayedEnd(AimPlayerRuntime winner)
+    {
+        yield return new WaitForSeconds(2.5f);
+        EndMiniGame(winner);
+    }
+
+    private void EndMiniGame(AimPlayerRuntime winner)
+    {
+        if (GameManager.instance != null && winner != null)
+        {
+            GameManager.instance.AddScoreToPlayer(winner.data);
+            Debug.Log($"Victoire enregistrée pour {winner.data.name}");
+        }
+
+        // Pour test : on charge directement la scène Score
+        SceneManager.LoadScene("Score");
+        // Et pour la version finale du Party Game :
+        // GameManager.instance.NextMiniGame();
     }
 
     private void HideShotsTexts()

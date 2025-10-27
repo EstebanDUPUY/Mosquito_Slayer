@@ -201,7 +201,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 209829450}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 330559664}
+        m_TargetAssemblyTypeName: FinalScoreManager, Assembly-CSharp
+        m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &209829450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -421,9 +433,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40ce151beba4c63408b2bb67fb0c554d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FinalScoreManager
-  winnerText: {fileID: 0}
-  scoreboardParent: {fileID: 0}
-  scoreEntryPrefab: {fileID: 0}
+  winnerText: {fileID: 1947785021}
+  scoreLines:
+  - {fileID: 638043482}
+  - {fileID: 1336378093}
+  - {fileID: 815608219}
+  - {fileID: 1964638930}
 --- !u!1 &638043480
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,7 +929,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 931022728}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 330559664}
+        m_TargetAssemblyTypeName: FinalScoreManager, Assembly-CSharp
+        m_MethodName: ReturnToMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &931022728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1522,7 +1549,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1366759379}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 330559664}
+        m_TargetAssemblyTypeName: FinalScoreManager, Assembly-CSharp
+        m_MethodName: Replay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1366759379
 MonoBehaviour:
   m_ObjectHideFlags: 0

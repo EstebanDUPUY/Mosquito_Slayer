@@ -5,37 +5,29 @@ using System.Linq;
 
 public class FinalScoreManager : MonoBehaviour
 {
-    [Header("Références UI")]
+    [Header("UI")]
     public TMP_Text winnerText;
-    public Transform scoreboardParent;
-    public GameObject scoreEntryPrefab; // un prefab avec 2 TMP_Text (nom + score)
+    public TMP_Text[] scoreLines; // 4 textes : un par joueur
 
     void Start()
     {
-        DisplayFinalScores();
+        DisplayScores();
     }
 
-    private void DisplayFinalScores()
+    void DisplayScores()
     {
-        var players = GameManager.instance.players;
+        var players = GameManager.instance.players.OrderByDescending(p => p.scorePV).ToArray();
 
-        // Tri décroissant selon le score
-        var sortedPlayers = players.OrderByDescending(p => p.scorePV).ToArray();
+        // Affiche le vainqueur
+        winnerText.text = $"{players[0].name} GAGNE LA PARTIE !";
 
-        // Afficher le vainqueur en haut
-        winnerText.text = $"{sortedPlayers[0].name} remporte la partie !";
-
-        // Générer les entrées du tableau de scores
-        foreach (var p in sortedPlayers)
+        // Affiche les scores ligne par ligne
+        for (int i = 0; i < players.Length; i++)
         {
-            GameObject entry = Instantiate(scoreEntryPrefab, scoreboardParent);
-            TMP_Text[] texts = entry.GetComponentsInChildren<TMP_Text>();
-            texts[0].text = p.name; // nom du joueur
-            texts[1].text = p.scorePV.ToString(); // score global
+            scoreLines[i].text = $"{i + 1}. {players[i].name} — {players[i].scorePV} victoires";
         }
     }
 
-    // Boutons de fin de partie
     public void Replay()
     {
         GameManager.instance.AvengersStartGame();
