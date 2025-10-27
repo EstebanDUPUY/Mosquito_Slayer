@@ -320,7 +320,7 @@ MonoBehaviour:
   - sceneName: 4-GET_LAID
     musicClip: {fileID: 8300000, guid: b2d65856910193d4f861d1ec13472c39, type: 3}
   - sceneName: FinalScore
-    musicClip: {fileID: 0}
+    musicClip: {fileID: 8300000, guid: b0d598171d7c7654a87b9adcf36c33e2, type: 3}
   - sceneName: Credits
     musicClip: {fileID: 8300000, guid: 39384b4814fa81c4db3ddf64c7f8c484, type: 3}
 --- !u!82 &389424194
