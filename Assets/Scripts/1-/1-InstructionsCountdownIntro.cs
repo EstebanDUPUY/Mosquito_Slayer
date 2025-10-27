@@ -13,7 +13,7 @@ public class InstructionCountdownIntro : MonoBehaviour
     [SerializeField] CanvasGroup countdownCg;
 
     [Header("Countdown label (met l'objet 'Timer')")]
-    [SerializeField] Text timerText;
+    [SerializeField] TextMeshProUGUI timerText;
     [SerializeField] TextMeshProUGUI timerTextTMP;
 
     [Header("Durées (secondes)")]

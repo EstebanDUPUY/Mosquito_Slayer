@@ -102,6 +102,7 @@ public class PlayerJoinManager : MonoBehaviour
         currentPlayer.joinOrderPV = playerIndex; // <- ajoute ce champ dans PlayerData (int)
         playerIndex++;
         currentPlayer.myDeviceIdPV = playerInput.devices[0].deviceId;
+        currentPlayer.playerCamera = playerInput.camera;
 
         // NEW: au lancement, on setup la couleur du joueur actuel (P1 au début)
         RefreshButtonColorsForCurrentPlayer();

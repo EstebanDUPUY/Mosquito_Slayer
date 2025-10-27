@@ -1757,7 +1757,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4937654075019607117, guid: a899df86dc378164d98b250f0e513c1a, type: 3}
       propertyPath: 'nonPlayedGames.Array.data[0]'
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4937654075019607117, guid: a899df86dc378164d98b250f0e513c1a, type: 3}
       propertyPath: 'nonPlayedGames.Array.data[1]'
@@ -1765,7 +1765,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4937654075019607117, guid: a899df86dc378164d98b250f0e513c1a, type: 3}
       propertyPath: 'nonPlayedGames.Array.data[2]'
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4937654075019607117, guid: a899df86dc378164d98b250f0e513c1a, type: 3}
       propertyPath: 'nonPlayedGames.Array.data[3]'

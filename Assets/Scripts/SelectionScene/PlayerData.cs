@@ -11,6 +11,7 @@ public class PlayerData : MonoBehaviour
     public int scorePV;
     // ordre dans lequel ce joueur a rejoint (0,1,2,3)
     public int joinOrderPV;
+    public Camera playerCamera;
 
     private void Awake()
     {
@@ -20,6 +21,14 @@ public class PlayerData : MonoBehaviour
     {
         playerInputPV = GetComponent<PlayerInput>(); 
         spriteRendererRef = GetComponent<SpriteRenderer>();
+    }
+
+    public void SetSprite(bool state)
+    {
+        if (spriteRendererRef)
+        {
+            spriteRendererRef.enabled = state;
+        }
     }
 }
 

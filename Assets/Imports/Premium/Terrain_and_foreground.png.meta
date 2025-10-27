@@ -1,0 +1,819 @@
+fileFormatVersion: 2
+guid: 11359b3971dce6b499f433fc89ed6e32
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6499455657442231024
+    second: Terrain_and_foreground_0
+  - first:
+      213: -6076572907848339917
+    second: Terrain_and_foreground_1
+  - first:
+      213: 656986056968773212
+    second: Terrain_and_foreground_2
+  - first:
+      213: -6231898263716478341
+    second: Terrain_and_foreground_3
+  - first:
+      213: 4625910548101247212
+    second: Terrain_and_foreground_4
+  - first:
+      213: -6420416569386568406
+    second: Terrain_and_foreground_5
+  - first:
+      213: 7479768675053485500
+    second: Terrain_and_foreground_6
+  - first:
+      213: -2521054028929540364
+    second: Terrain_and_foreground_7
+  - first:
+      213: 1711064270913897133
+    second: Terrain_and_foreground_8
+  - first:
+      213: 5680039135420369667
+    second: Terrain_and_foreground_9
+  - first:
+      213: -3553795479285820983
+    second: Terrain_and_foreground_10
+  - first:
+      213: 2952253770085173679
+    second: Terrain_and_foreground_11
+  - first:
+      213: -5780495879308099222
+    second: Terrain_and_foreground_12
+  - first:
+      213: -2092552549071391095
+    second: Terrain_and_foreground_13
+  - first:
+      213: 6074296533182690688
+    second: Terrain_and_foreground_14
+  - first:
+      213: -1239774476953680034
+    second: Terrain_and_foreground_15
+  - first:
+      213: 6880997326390554520
+    second: Terrain_and_foreground_16
+  - first:
+      213: -7953395164410300561
+    second: Terrain_and_foreground_17
+  - first:
+      213: 9092327526742304796
+    second: Terrain_and_foreground_18
+  - first:
+      213: 5758133856362445611
+    second: Terrain_and_foreground_19
+  - first:
+      213: 5033245050825710093
+    second: Terrain_and_foreground_20
+  - first:
+      213: 1168255978220650954
+    second: Terrain_and_foreground_21
+  - first:
+      213: 6897100861299324462
+    second: Terrain_and_foreground_22
+  - first:
+      213: -8151945297565267920
+    second: Terrain_and_foreground_23
+  - first:
+      213: -6871068052903007778
+    second: Terrain_and_foreground_24
+  - first:
+      213: -2293533748497562970
+    second: Terrain_and_foreground_25
+  - first:
+      213: -3365271683741857621
+    second: Terrain_and_foreground_26
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Terrain_and_foreground_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 646
+        width: 107
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f24f3f1c74b23a50800000000000000
+      internalID: 6499455657442231024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_1
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 735
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33eefe7a22dababa0800000000000000
+      internalID: -6076572907848339917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_2
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 646
+        width: 107
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5e120486551e1900800000000000000
+      internalID: 656986056968773212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_3
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 703
+        width: 18
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b724ec21c89d389a0800000000000000
+      internalID: -6231898263716478341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_4
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 518
+        width: 107
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce0be466229823040800000000000000
+      internalID: 4625910548101247212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_5
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 607
+        width: 18
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a257eaf952916e6a0800000000000000
+      internalID: -6420416569386568406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_6
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 518
+        width: 107
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbd38aefaf97dc760800000000000000
+      internalID: 7479768675053485500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_7
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 575
+        width: 18
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fe5612c7ba630dd0800000000000000
+      internalID: -2521054028929540364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_8
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 543
+        width: 18
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da28fa783ebeeb710800000000000000
+      internalID: 1711064270913897133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 466
+        width: 80
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30b4c01ef7d83de40800000000000000
+      internalID: 5680039135420369667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_10
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 511
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c197c427d16eaec0800000000000000
+      internalID: -3553795479285820983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_11
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 463
+        width: 130
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa90cb4892388f820800000000000000
+      internalID: 2952253770085173679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_12
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 431
+        width: 18
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a614b38cf9d87cfa0800000000000000
+      internalID: -5780495879308099222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_13
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 431
+        width: 10
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 986f2ce1b82c5f2e0800000000000000
+      internalID: -2092552549071391095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_14
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 431
+        width: 17
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 085bdb0938c3c4450800000000000000
+      internalID: 6074296533182690688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 399
+        width: 161
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e57849b8eaf6bcee0800000000000000
+      internalID: -1239774476953680034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 351
+        width: 161
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89febeb7c963e7f50800000000000000
+      internalID: 6880997326390554520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_17
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 175
+        width: 64
+        height: 254
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f67b303ac3ddf9190800000000000000
+      internalID: -7953395164410300561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 212
+        width: 161
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c182bfc56bf6e2e70800000000000000
+      internalID: 9092327526742304796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_19
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 199
+        width: 33
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2b32a50c3009ef40800000000000000
+      internalID: 5758133856362445611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_20
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 116
+        width: 25
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0a95f9d4bda9d540800000000000000
+      internalID: 5033245050825710093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 129
+        width: 33
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac1819c5f9a763010800000000000000
+      internalID: 1168255978220650954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_22
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 167
+        width: 34
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2679c1e0bc67bf50800000000000000
+      internalID: 6897100861299324462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_23
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 103
+        width: 33
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 038c43651f87ede80800000000000000
+      internalID: -8151945297565267920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_24
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 100
+        width: 18
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed96e27a20015a0a0800000000000000
+      internalID: -6871068052903007778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_25
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 31
+        width: 104
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a2ce68153bbb20e0800000000000000
+      internalID: -2293533748497562970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terrain_and_foreground_26
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 81
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba8c2edcb372c41d0800000000000000
+      internalID: -3365271683741857621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Terrain_and_foreground_0: 6499455657442231024
+      Terrain_and_foreground_1: -6076572907848339917
+      Terrain_and_foreground_10: -3553795479285820983
+      Terrain_and_foreground_11: 2952253770085173679
+      Terrain_and_foreground_12: -5780495879308099222
+      Terrain_and_foreground_13: -2092552549071391095
+      Terrain_and_foreground_14: 6074296533182690688
+      Terrain_and_foreground_15: -1239774476953680034
+      Terrain_and_foreground_16: 6880997326390554520
+      Terrain_and_foreground_17: -7953395164410300561
+      Terrain_and_foreground_18: 9092327526742304796
+      Terrain_and_foreground_19: 5758133856362445611
+      Terrain_and_foreground_2: 656986056968773212
+      Terrain_and_foreground_20: 5033245050825710093
+      Terrain_and_foreground_21: 1168255978220650954
+      Terrain_and_foreground_22: 6897100861299324462
+      Terrain_and_foreground_23: -8151945297565267920
+      Terrain_and_foreground_24: -6871068052903007778
+      Terrain_and_foreground_25: -2293533748497562970
+      Terrain_and_foreground_26: -3365271683741857621
+      Terrain_and_foreground_3: -6231898263716478341
+      Terrain_and_foreground_4: 4625910548101247212
+      Terrain_and_foreground_5: -6420416569386568406
+      Terrain_and_foreground_6: 7479768675053485500
+      Terrain_and_foreground_7: -2521054028929540364
+      Terrain_and_foreground_8: 1711064270913897133
+      Terrain_and_foreground_9: 5680039135420369667
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
