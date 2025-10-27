@@ -50,9 +50,9 @@ public class PlayerSucc : MonoBehaviour
 
     private PlayerInput _pi;
 
-    private void Awake()
+    public void LinkInput(PlayerInput input)
     {
-        _pi = GetComponent<PlayerInput>();
+        _pi = input;
         var suck = _pi.actions["Suck"];
         suck.started += SuccInput; //quand on appuie sur le bouton Suck, on commence à sucer
         suck.canceled += SuccInput; //quand on arrête d'appuyer sur le bouton Suck, on arrête de sucer

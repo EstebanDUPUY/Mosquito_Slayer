@@ -11,6 +11,7 @@ public class PlayerData : MonoBehaviour
     public int scorePV;
     // ordre dans lequel ce joueur a rejoint (0,1,2,3)
     public int joinOrderPV;
+    public Camera playerCamera;
 
     private void Awake()
     {
