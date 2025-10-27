@@ -1,13 +1,12 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
+
 
 public class SwatController : MonoBehaviour
 {
     [Header("Zones")]
-    public Transform[] zones;
+    public ZoneInfo[] zones;
     public Transform spawnPoint;
-    public Vector2 size = new Vector2(1f, 1f);
     public LayerMask playerLayer;
 
     [Header("Paramètres d'attaque")]
@@ -15,13 +14,15 @@ public class SwatController : MonoBehaviour
     public float minWarningDelay = 1f;
     public float timeToMaxSpeed = 120f;
     public float crashSpeed = 15f;
+    public float maxCrashSpeed = 30f;
 
 
     [Header("Effets")]
     public GameObject warningPrefab;
     private GameObject currentWarning;
-    private bool attacking = false;
+    
 
+    private bool attacking = false;
     private float gameTimeElapsed = 0f;
 
     // Update is called once per frame
@@ -38,7 +39,9 @@ public class SwatController : MonoBehaviour
     {
         attacking = true;
         gameTimeElapsed = 0f;
-        StartCoroutine(AttackLoop());
+
+        StartCoroutine(AttackLoop());  
+        
     }
 
     public void StopAttacking()
@@ -47,29 +50,36 @@ public class SwatController : MonoBehaviour
     }
 
     IEnumerator AttackLoop()
-    {
-        
+    {      
 
         while (attacking)
-        {         
-
+        {
+            // --- 1. Choisir La Zone  ---
             int index = Random.Range(0, zones.Length);
-            Transform zone = zones[index];
+            ZoneInfo zone = zones[index];
 
+            // --- 2. Calculer La Vitesse ---
             float elapsed = gameTimeElapsed;
             float delay = Mathf.Lerp(initialWarningDelay, minWarningDelay, Mathf.Clamp01(elapsed / timeToMaxSpeed));
+            float currentSpeed = Mathf.Lerp(crashSpeed, maxCrashSpeed, Mathf.Clamp01(elapsed / timeToMaxSpeed));
 
-            StartWarning(zone);
+            // --- 3. Attaquer ---
+            StartWarning(zone.transform);     
             GameManagerSwat.Instance.soundManagerSwat.PlayWarning();
 
             yield return new WaitForSeconds(delay);
 
-            if (!attacking) yield break;
+            if (!attacking) break;
+                       
 
             CancelWarning();
-            yield return PerformCrash(zone);
+
+
+            yield return PerformCrash(zone, currentSpeed);
         }
     }
+
+    
 
     void StartWarning(Transform zone)
     {
@@ -78,43 +88,47 @@ public class SwatController : MonoBehaviour
 
     void CancelWarning()
     {
-        if (currentWarning)
+        if (currentWarning != null)
         {
               Destroy(currentWarning);
         }
     }
 
-    IEnumerator PerformCrash(Transform zone)
-    {
+    IEnumerator PerformCrash(ZoneInfo zone, float currentSpeed)
+    {    
 
         transform.position = spawnPoint.position;
-
         Vector2 start = spawnPoint.position;
-        Vector2 end = zone.position;
-        float travelTime = Vector2.Distance(start, end) / crashSpeed;
+        Vector2 end = zone.transform.position;
+        float travelTime = Vector2.Distance(start, end) / currentSpeed;
         float t = 0f;
 
         while (t < travelTime)
         {
             t += Time.deltaTime;
+                     
             transform.position = Vector2.Lerp(start, end, t / travelTime);
+              
             yield return null;
-
         }
-
+        
+        
         transform.position = end;
+        
 
-        OnImpact(end);
-        transform.position = spawnPoint.position;
+        OnImpact(end, zone.size);
+
+       transform.position = spawnPoint.position;
+
         yield return new WaitForSeconds(1f); // Petite pause avant le prochain cycle
 
     }
 
-    void OnImpact(Vector2 pos)
+    void OnImpact(Vector2 pos, Vector2 zoneSize)
     {
         GameManagerSwat.Instance.soundManagerSwat.PlayImpact();
 
-        Collider2D[] hits = Physics2D.OverlapBoxAll(pos, size, playerLayer);
+        Collider2D[] hits = Physics2D.OverlapBoxAll(pos, zoneSize, 0f, playerLayer);
 
         foreach (var h in hits)
         {
@@ -131,9 +145,12 @@ public class SwatController : MonoBehaviour
         Gizmos.color = Color.red;
         if (zones != null)
         {
-            foreach (var z in zones)
+            foreach (ZoneInfo z in zones)
             {
-                if (z) Gizmos.DrawWireCube(z.position, size);
+                if (z != null)
+                {
+                    Gizmos.DrawWireCube(z.transform.position, z.size);
+                }
             }
         }
     }
