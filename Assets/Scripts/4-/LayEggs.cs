@@ -11,6 +11,7 @@ public class LayEggs : MonoBehaviour
     public Transform wherePlayerIs;
     public bool hasBomb = false;
     public LayBomb throwBombMdr;
+    public PlayerData linkZelda;
 
     public void LayEggsInput(InputAction.CallbackContext ctx)
     {
@@ -26,10 +27,13 @@ public class LayEggs : MonoBehaviour
         if (throwBombMdr.bombIsActive)
         {
              throwBombMdr.PassBombToNextPlayer();
+            hasBomb = false;
         }
         else
         {
-             throwBombMdr.ActivateBomb();
+            throwBombMdr.ActivateBomb();
+            throwBombMdr.PassBombToNextPlayer();
+            hasBomb = false;
 
         }
 

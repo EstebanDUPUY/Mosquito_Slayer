@@ -14,7 +14,15 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
-        instance = this;
+
+        if (instance  == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     public void AvengersStartGame()
     {

@@ -257,6 +257,169 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295849797}
   m_CullTransparentMesh: 1
+--- !u!1 &389424191
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 389424192}
+  - component: {fileID: 389424193}
+  - component: {fileID: 389424194}
+  m_Layer: 0
+  m_Name: MusicManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &389424192
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389424191}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1063915637}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &389424193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389424191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cde7a81b47d5e3a4287f5392e401318d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicManager
+  musicSource: {fileID: 389424194}
+  fadeOutTime: 0.5
+  fadeInTime: 0.5
+  targetVolume: 0.8
+  sceneMusics:
+  - sceneName: MainMenu
+    musicClip: {fileID: 8300000, guid: f562fa53aa404124c9a357b7b8f81b2a, type: 3}
+  - sceneName: SelectionScene
+    musicClip: {fileID: 8300000, guid: f194da0c73c0c9147ad93c9338aa84c4, type: 3}
+  - sceneName: 1-SUCC
+    musicClip: {fileID: 8300000, guid: 1322a9e47493d744db83a28f196444ea, type: 3}
+  - sceneName: 2-ESCAPE_THE_SWAT
+    musicClip: {fileID: 8300000, guid: 2756e25df6aa9da4bbd9a112582637f4, type: 3}
+  - sceneName: 3-AIMSQUITO
+    musicClip: {fileID: 8300000, guid: f8dda85951a71e94ab45ff68d6a5340d, type: 3}
+  - sceneName: 4-GET_LAID
+    musicClip: {fileID: 8300000, guid: b2d65856910193d4f861d1ec13472c39, type: 3}
+  - sceneName: FinalScore
+    musicClip: {fileID: 0}
+  - sceneName: Credits
+    musicClip: {fileID: 8300000, guid: 39384b4814fa81c4db3ddf64c7f8c484, type: 3}
+--- !u!82 &389424194
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389424191}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &433626117
 GameObject:
   m_ObjectHideFlags: 0
@@ -1366,6 +1529,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6817396143874786141, guid: bc60817f4b17edd4fbac02a968277c2b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 550934357}
+    - targetCorrespondingSourceObject: {fileID: 6817396143874786141, guid: bc60817f4b17edd4fbac02a968277c2b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 389424192}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc60817f4b17edd4fbac02a968277c2b, type: 3}
 --- !u!1660057539 &9223372036854775807

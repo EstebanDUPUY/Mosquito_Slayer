@@ -139,10 +139,16 @@ public class PlayerSucc : MonoBehaviour
 
     void Die() //quand le joueur meurt, on change ses états vivants et de succion pour tout stopper 
     {
+        if (!IsAlive) return;
+
         IsAlive = false;
         IsSuccing = false;
-        Manager?.OnPlayerDied(this);
-        SurvivorRegistry.Died(this); // ADD : annonce globale "je suis mort"
+
+        // dire au manager local "je suis mort"
+        if (Manager != null)
+            Manager.OnPlayerDied(this);
+
+        // pas besoin d'aller plus loin ici, LaneManager.Instance.NotifyDeath() sera appelé depuis le SuccManager
     }
 
     void OnTriggerEnter2D(Collider2D other)
