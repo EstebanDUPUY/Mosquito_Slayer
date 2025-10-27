@@ -120,6 +120,9 @@ public class PlayerSucc : MonoBehaviour
         IsAlive = true; IsSuccing = false; OnGroundSuck = true; InDeathZone = false;
         Points = 0; Attention = 0f; MaxPoints = targetScore; iFrameUntil = 0f;
         sabotageReadyAt = 0f;
+
+        SurvivorRegistry.Register(this); // ADD : je (re)deviens vivant globalement
+
     }
 
     public void AddPoints(int delta) //on ajoute des points de sang pour le joueur quand il suce avec une limite max
@@ -136,8 +139,16 @@ public class PlayerSucc : MonoBehaviour
 
     void Die() //quand le joueur meurt, on change ses états vivants et de succion pour tout stopper 
     {
+        if (!IsAlive) return;
+
         IsAlive = false;
         IsSuccing = false;
+
+        // dire au manager local "je suis mort"
+        if (Manager != null)
+            Manager.OnPlayerDied(this);
+
+        // pas besoin d'aller plus loin ici, LaneManager.Instance.NotifyDeath() sera appelé depuis le SuccManager
     }
 
     void OnTriggerEnter2D(Collider2D other)

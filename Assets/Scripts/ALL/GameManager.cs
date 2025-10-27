@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
@@ -5,7 +6,7 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    private PlayerData[] players;
+    public PlayerData[] players;
     private int miniGamesPlayed;
     private List<int> playedGames;
     [SerializeField] private List<int> nonPlayedGames;
@@ -13,7 +14,15 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
-        instance = this;
+
+        if (instance  == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     public void AvengersStartGame()
     {
@@ -49,7 +58,7 @@ public class GameManager : MonoBehaviour
     }
     public void AddScoreToPlayer(PlayerData winner)
     {
-        if (winner != null /*win*/) winner.scorePV++;
+        if (winner != null) winner.scorePV++;
     }
     private void ChangeScene(int nextScene)
     {
@@ -81,3 +90,4 @@ public class GameManager : MonoBehaviour
         }
     }
 }
+

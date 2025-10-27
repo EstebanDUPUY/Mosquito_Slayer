@@ -1,3 +1,4 @@
+
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,14 +8,34 @@ public class LayEggs : MonoBehaviour
     public GameObject eggsGO;
     [SerializeField] private int eggCount;
     [SerializeField] private Vector2 whereShouldEggBe = new Vector2(10, 10);
-    [SerializeField] private Transform wherePlayerIs;
+    public Transform wherePlayerIs;
+    public bool hasBomb = false;
+    public LayBomb throwBombMdr;
+    public PlayerData linkZelda;
 
     public void LayEggsInput(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        Debug.Log($"[INPUT] P{wherePlayerIs.GetComponent<PlayerData>().myDeviceIdPV} LAY EGG");
+        Instantiate(eggsGO, wherePlayerIs.position + (Vector3)whereShouldEggBe, Quaternion.identity, transform);
+        eggCount++;
+    }
+
+    public void ThrowBomb(InputAction.CallbackContext ctx)
+    { 
+        if (!hasBomb) return;
+
+        if (throwBombMdr.bombIsActive)
         {
-            Instantiate(eggsGO, wherePlayerIs.position + (Vector3)whereShouldEggBe, Quaternion.identity, wherePlayerIs);
-            eggCount++;
+             throwBombMdr.PassBombToNextPlayer();
+            hasBomb = false;
         }
+        else
+        {
+            throwBombMdr.ActivateBomb();
+            throwBombMdr.PassBombToNextPlayer();
+            hasBomb = false;
+
+        }
+
     }
 }
