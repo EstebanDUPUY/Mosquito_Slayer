@@ -9,29 +9,6 @@ public class LaneManager : MonoBehaviour
     [Header("Références")]
     [SerializeField] private GameObject playerPrefab; // prefab avec PlayerSucc + PlayerInput + SpriteRenderer
 
-    [System.Serializable]
-    public class Lane
-    {
-        public string laneName = "Lane";
-
-        [Header("Hiérarchie")]
-        public GameObject root;              // NEW : le GameObject parent de TOUTE la lane (caméra, bras, HUD...)
-                                             // -> on va l'activer/désactiver selon le nb de joueurs
-
-        public Transform playerSpawn;        // où on pose le moustique
-
-        [Header("Gameplay refs")]
-        public SuccManager manager;          // doit avoir players[] de taille 1 pour cette lane
-        public HumanAttack human;
-        public LaserAttack laser;
-        public SuccHUD hud;
-
-        [Header("Caméra dédiée à la lane")]
-        public Camera cam;
-
-        [Header("UI / Canvas")]
-        public Canvas laneCanvas;
-    }
 
     [Header("Lanes (max 4)")]
     public Lane[] lanes = new Lane[4];
@@ -123,10 +100,10 @@ public class LaneManager : MonoBehaviour
             if (ln.root) ln.root.SetActive(true);
 
             // 🔴 NEW : avant même de lancer la round, on lie le canvas à SA caméra
-            BindCanvasToCamera(ln, i); // i sert juste de sortingOrder différent par lane
+            //BindCanvasToCamera(ln, i); // i sert juste de sortingOrder différent par lane
 
             // on spawn le moustique pour CETTE lane
-            PlayerSucc ps = SpawnPlayerInLane(pdata, ln);
+            PlayerSucc ps = ln.SpawnPlayerInLane(pdata);
 
             if (ps == null)
             {
@@ -188,124 +165,124 @@ public class LaneManager : MonoBehaviour
     }
 
     // instancie le PlayerPrefab dans la lane, l'associe à la bonne caméra/HUD/manager etc.
-    private PlayerSucc SpawnPlayerInLane(PlayerData pdata, Lane ln)
-    {
-        // 2) Instancier le Player avec SON device (New Input System)
-        GameObject playerGO = null;
+    //private PlayerSucc SpawnPlayerInLane(PlayerData pdata, Lane ln)
+    //{
+    //    // 2) Instancier le Player avec SON device (New Input System)
+    //    GameObject playerGO = null;
 
-        // Essayons de récupérer le premier device lié au PlayerData
-        InputDevice device = null;
-        if (pdata.playerInputPV != null && pdata.playerInputPV.devices.Count > 0)
-            device = pdata.playerInputPV.devices[0];
+    //    // Essayons de récupérer le premier device lié au PlayerData
+    //    InputDevice device = null;
+    //    if (pdata.playerInputPV != null && pdata.playerInputPV.devices.Count > 0)
+    //        device = pdata.playerInputPV.devices[0];
 
-        if (device != null)
-        {
-            // Instancie un PlayerPrefab déjà pairé avec ce device
-            playerGO = PlayerInput.Instantiate(
-                playerPrefab,
-                controlScheme: null,             // si tu utilises des control schemes, mets le bon nom ici
-                pairWithDevice: device
-            ).gameObject;
-        }
-        else
-        {
-            // fallback : on instancie normal (clavier partagé par ex.)
-            playerGO = Instantiate(playerPrefab);
-        }
+    //    if (device != null)
+    //    {
+    //        // Instancie un PlayerPrefab déjà pairé avec ce device
+    //        playerGO = PlayerInput.Instantiate(
+    //            playerPrefab,
+    //            controlScheme: null,             // si tu utilises des control schemes, mets le bon nom ici
+    //            pairWithDevice: device
+    //        ).gameObject;
+    //    }
+    //    else
+    //    {
+    //        // fallback : on instancie normal (clavier partagé par ex.)
+    //        playerGO = Instantiate(playerPrefab);
+    //    }
 
-        // 3) Positionner sur le spawn de la lane
-        if (ln.playerSpawn != null)
-        {
-            playerGO.transform.position = ln.playerSpawn.position;
-            playerGO.transform.rotation = ln.playerSpawn.rotation;
-        }
+    //    // 3) Positionner sur le spawn de la lane
+    //    if (ln.playerSpawn != null)
+    //    {
+    //        playerGO.transform.position = ln.playerSpawn.position;
+    //        playerGO.transform.rotation = ln.playerSpawn.rotation;
+    //    }
 
-        // 4) Habillage visuel depuis PlayerData (sprite, etc.)
-        var sr = playerGO.GetComponent<SpriteRenderer>();
-        if (sr && pdata.playerSpritePV) sr.sprite = pdata.playerSpritePV;
+    //    // 4) Habillage visuel depuis PlayerData (sprite, etc.)
+    //    var sr = playerGO.GetComponent<SpriteRenderer>();
+    //    if (sr && pdata.playerSpritePV) sr.sprite = pdata.playerSpritePV;
 
-        // 5) Brancher le PlayerSucc vers le manager de SA lane
-        var ps = playerGO.GetComponent<PlayerSucc>();
-        if (ps == null)
-        {
-            Debug.LogError("[LaneManager] PlayerPrefab sans PlayerSucc !");
-            return null;
-        }
+    //    // 5) Brancher le PlayerSucc vers le manager de SA lane
+    //    var ps = playerGO.GetComponent<PlayerSucc>();
+    //    if (ps == null)
+    //    {
+    //        Debug.LogError("[LaneManager] PlayerPrefab sans PlayerSucc !");
+    //        return null;
+    //    }
 
-        // Index local à la lane : 0 (une lane = un joueur)
-        ps.Index = 0;
-        ps.Manager = ln.manager;
+    //    // Index local à la lane : 0 (une lane = un joueur)
+    //    ps.Index = 0;
+    //    ps.Manager = ln.manager;
 
-        // 6) Configurer le SuccManager de la lane
-        if (ln.manager != null)
-        {
-            // On s'assure que le tableau a au moins 1 case
-            if (ln.manager.players == null || ln.manager.players.Length == 0)
-                ln.manager.players = new PlayerSucc[1];
+    //    // 6) Configurer le SuccManager de la lane
+    //    if (ln.manager != null)
+    //    {
+    //        // On s'assure que le tableau a au moins 1 case
+    //        if (ln.manager.players == null || ln.manager.players.Length == 0)
+    //            ln.manager.players = new PlayerSucc[1];
 
-            ln.manager.players[0] = ps;
-            ln.manager.hud = ln.hud;
-            ln.manager.human = ln.human;
+    //        ln.manager.players[0] = ps;
+    //        ln.manager.hud = ln.hud;
+    //        ln.manager.human = ln.human;
 
-            // Le LaserAttack connaît le manager pour OnLaserHit()
-            if (ln.laser != null)
-                ln.laser.manager = ln.manager;
-        }
+    //        // Le LaserAttack connaît le manager pour OnLaserHit()
+    //        if (ln.laser != null)
+    //            ln.laser.manager = ln.manager;
+    //    }
 
-        // IMPORTANT HUD : si ton HUD est un Canvas en "Screen Space - Camera",
-        // assure qu'il pointe sur la bonne cam de la lane
-        // === NEW : brancher et configurer le Canvas HUD de cette lane pour qu'il s'affiche vraiment ===
-        Canvas assignedCanvas = null; // on va garder une réf pour le debug final
+    //    // IMPORTANT HUD : si ton HUD est un Canvas en "Screen Space - Camera",
+    //    // assure qu'il pointe sur la bonne cam de la lane
+    //    // === NEW : brancher et configurer le Canvas HUD de cette lane pour qu'il s'affiche vraiment ===
+    //    Canvas assignedCanvas = null; // on va garder une réf pour le debug final
 
-        if (ln.hud != null)
-        {
-            // On part du principe que ln.hud est un composant dans CETTE lane
-            // (ex: SuccHUD sur "HUD_Lane0/CanvasLane0").
-            assignedCanvas = ln.hud.GetComponentInParent<Canvas>();
+    //    if (ln.hud != null)
+    //    {
+    //        // On part du principe que ln.hud est un composant dans CETTE lane
+    //        // (ex: SuccHUD sur "HUD_Lane0/CanvasLane0").
+    //        assignedCanvas = ln.hud.GetComponentInParent<Canvas>();
 
-            if (assignedCanvas != null)
-            {
-                // 1. Forcer le mode Screen Space - Camera (sinon partage chelou, ou pas dans le split)
-                assignedCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+    //        if (assignedCanvas != null)
+    //        {
+    //            // 1. Forcer le mode Screen Space - Camera (sinon partage chelou, ou pas dans le split)
+    //            assignedCanvas.renderMode = RenderMode.ScreenSpaceCamera;
 
-                // 2. Attacher la caméra de CETTE lane
-                if (ln.cam != null)
-                {
-                    assignedCanvas.worldCamera = ln.cam;
-                }
+    //            // 2. Attacher la caméra de CETTE lane
+    //            if (ln.cam != null)
+    //            {
+    //                assignedCanvas.worldCamera = ln.cam;
+    //            }
 
-                // 3. S'assurer qu'il passe DEVANT le bras/monstre
-                assignedCanvas.sortingOrder = 1000;
-                assignedCanvas.planeDistance = 1f;
+    //            // 3. S'assurer qu'il passe DEVANT le bras/monstre
+    //            assignedCanvas.sortingOrder = 1000;
+    //            assignedCanvas.planeDistance = 1f;
 
-                // 4. Activer le GO du Canvas
-                assignedCanvas.gameObject.SetActive(true);
+    //            // 4. Activer le GO du Canvas
+    //            assignedCanvas.gameObject.SetActive(true);
 
-                // 5. IMPORTANT : on force aussi le layer du Canvas ET de tous ses enfants en "UI"
-                //    (si jamais en scene ça a atterri dans Default etc).
-                int uiLayer = LayerMask.NameToLayer("UI");
-                if (uiLayer >= 0)
-                {
-                    SetLayerRecursively(assignedCanvas.gameObject, uiLayer);
-                }
-            }
-        }
+    //            // 5. IMPORTANT : on force aussi le layer du Canvas ET de tous ses enfants en "UI"
+    //            //    (si jamais en scene ça a atterri dans Default etc).
+    //            int uiLayer = LayerMask.NameToLayer("UI");
+    //            if (uiLayer >= 0)
+    //            {
+    //                SetLayerRecursively(assignedCanvas.gameObject, uiLayer);
+    //            }
+    //        }
+    //    }
 
-        // === DEBUG juste après config HUD de la lane ===
-        DebugLaneHUD(
-            laneIndex: System.Array.IndexOf(lanes, ln),
-            ln: ln,
-            canvas: assignedCanvas
-        );
+    //    // === DEBUG juste après config HUD de la lane ===
+    //    DebugLaneHUD(
+    //        laneIndex: System.Array.IndexOf(lanes, ln),
+    //        ln: ln,
+    //        canvas: assignedCanvas
+    //    );
 
-        // puis on continue normal
-        Debug.Log($"[LaneManager] Joueur '{pdata.name}' placé sur {ln.laneName}");
+    //    // puis on continue normal
+    //    Debug.Log($"[LaneManager] Joueur '{pdata.name}' placé sur {ln.laneName}");
 
-        // NEW : attacher les infos du joueur global à ce runtime GO
-        CopyPlayerDataToRuntimePlayer(pdata, playerGO);
+    //    // NEW : attacher les infos du joueur global à ce runtime GO
+    //    CopyPlayerDataToRuntimePlayer(pdata, playerGO);
 
-        return ps;
-    }
+    //    return ps;
+    //}
 
     // On configure les Rect des caméras en fonction du nombre de lanes ACTIVES
     private void SetupCameraRectsDynamic() // NEW

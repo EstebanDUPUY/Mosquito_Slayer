@@ -30,7 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 295.51917, y: 177.92793, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1833219196860536807}
   m_Father: {fileID: 0}
@@ -217,6 +217,7 @@ MonoBehaviour:
   spriteRendererRef: {fileID: 8521034002466538593}
   scorePV: 0
   joinOrderPV: 0
+  playerCamera: {fileID: 0}
 --- !u!1 &5061734389069464172
 GameObject:
   m_ObjectHideFlags: 0
