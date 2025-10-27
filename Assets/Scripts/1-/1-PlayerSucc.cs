@@ -49,10 +49,13 @@ public class PlayerSucc : MonoBehaviour
     #region START/UPDATE
 
     private PlayerInput _pi;
+    private PlayerData linkedPlayer;
+    [SerializeField] SpriteRenderer playerSR;
 
-    public void LinkInput(PlayerInput input)
+    public void LinkInput(PlayerData data)
     {
-        _pi = input;
+        linkedPlayer = data;
+        _pi = data.playerInputPV;
         var suck = _pi.actions["Suck"];
         suck.started += SuccInput; //quand on appuie sur le bouton Suck, on commence à sucer
         suck.canceled += SuccInput; //quand on arrête d'appuyer sur le bouton Suck, on arrête de sucer
@@ -61,6 +64,9 @@ public class PlayerSucc : MonoBehaviour
         sab.performed += SabotageInput; //quand on appuie sur le bouton Sabotage, on lance la fonction de sabotage
 
         _rb = GetComponent<Rigidbody2D>(); // s'il est présent, on l'utilise 
+
+        playerSR.sprite = linkedPlayer.playerSpritePV; // on applique le sprite choisi au joueur
+        linkedPlayer.SetSprite(false);
     }
 
     #endregion
@@ -73,7 +79,10 @@ public class PlayerSucc : MonoBehaviour
         suck.canceled -= SuccInput;
 
         var sab = _pi.actions["BlindEnemies"];
-        sab.performed -= SabotageInput;  
+        sab.performed -= SabotageInput;
+
+        linkedPlayer?.SetSprite(true);
+
     }
 
     //

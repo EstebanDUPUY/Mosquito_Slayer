@@ -56,7 +56,7 @@ public class Lane : MonoBehaviour
                 laser.manager = manager;
         }
 
-        playerSucc.LinkInput(pdata.playerInputPV);
+        playerSucc.LinkInput(pdata);
 
         //SetCanvas();
         laneCanvas.worldCamera = pdata.playerCamera;

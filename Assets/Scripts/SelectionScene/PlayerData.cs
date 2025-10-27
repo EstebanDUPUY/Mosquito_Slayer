@@ -22,5 +22,13 @@ public class PlayerData : MonoBehaviour
         playerInputPV = GetComponent<PlayerInput>(); 
         spriteRendererRef = GetComponent<SpriteRenderer>();
     }
+
+    public void SetSprite(bool state)
+    {
+        if (spriteRendererRef)
+        {
+            spriteRendererRef.enabled = state;
+        }
+    }
 }
 
