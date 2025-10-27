@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,43 +22,39 @@ public class LayBomb : MonoBehaviour
     [SerializeField] private AudioSource explosionSound;
     [SerializeField] private AudioSource passSound;
 
-    private List<LayEggs> players;
-    private LayEggs currentBombHolder;
+    private List<PlayerData> players;
+    private PlayerData currentBombHolder;
     private GameObject bombVisual;
     private float explosionCountdown;
     private float maxCountdown;
     private bool gameStarted = false;
-    public bool bombIsActive = false;
+    private bool bombIsActive = false;
     private bool canPassBomb = false;
     private int eliminatedPlayerIndex = -1;
 
-    //private void Start()
-    //{
-    //    // Get all players from their persistent objects
-    //    FindPlayers();
-
-    //    if (players.Count < 2)
-    //    {
-    //        Debug.LogError("Not enough players for Tic Tac Boum!");
-    //        return;
-    //    }
-
-    //    StartCoroutine(StartGameSequence());
-    //}
-
-    public void SetUpBomb()
+    private void Start()
     {
-        players = new List<LayEggs>();
-        LayEggs[] foundPlayers = FindObjectsOfType<LayEggs>();
+        // Get all players from their persistent objects
+        FindPlayers();
 
-        for (int i = 0; i < foundPlayers.Length; i++)
+        if (players.Count < 2)
         {
-            if (foundPlayers[i].linkZelda != null)
-                players.Add(foundPlayers[i]);
+            Debug.LogError("Not enough players for Tic Tac Boum!");
+            return;
         }
 
         StartCoroutine(StartGameSequence());
+    }
 
+    private void FindPlayers()
+    {
+        players = new List<PlayerData>();
+        PlayerData[] foundPlayers = FindObjectsOfType<PlayerData>();
+
+        foreach (PlayerData player in foundPlayers)
+        {
+            players.Add(player);
+        }
     }
 
     private IEnumerator StartGameSequence()
@@ -96,10 +91,9 @@ public class LayBomb : MonoBehaviour
         GiveBombToPlayer(players[randomIndex]);
     }
 
-    private void GiveBombToPlayer(LayEggs player)
+    private void GiveBombToPlayer(PlayerData player)
     {
         currentBombHolder = player;
-        player.hasBomb = true;
 
         // Position bomb visual near player
         if (bombVisualPrefab != null && bombVisual == null)
@@ -129,7 +123,7 @@ public class LayBomb : MonoBehaviour
         if (!gameStarted || currentBombHolder == null) return;
 
         // Handle bomb activation and passing
-        //HandlePlayerInput();
+        HandlePlayerInput();
 
         // Update timer if bomb is active
         if (bombIsActive)
@@ -138,30 +132,30 @@ public class LayBomb : MonoBehaviour
         }
     }
 
-    //private void HandlePlayerInput()
-    //{
-    //    // Check if current bomb holder presses their action button
-    //    if (currentBombHolder.playerInputPV != null)
-    //    {
-    //        var inputAction = currentBombHolder.playerInputPV.actions["Fire"];
+    private void HandlePlayerInput()
+    {
+        // Check if current bomb holder presses their action button
+        if (currentBombHolder.playerInputPV != null)
+        {
+            var inputAction = currentBombHolder.playerInputPV.actions["Fire"];
 
-    //        if (inputAction != null && inputAction.triggered)
-    //        {
-    //            if (!bombIsActive)
-    //            {
-    //                // First press: Activate the bomb
-    //                ActivateBomb();
-    //            }
-    //            else if (canPassBomb)
-    //            {
-    //                // Subsequent presses: Pass the bomb
-    //                PassBombToNextPlayer();
-    //            }
-    //        }
-    //    }
-    //}
+            if (inputAction != null && inputAction.triggered)
+            {
+                if (!bombIsActive)
+                {
+                    // First press: Activate the bomb
+                    ActivateBomb();
+                }
+                else if (canPassBomb)
+                {
+                    // Subsequent presses: Pass the bomb
+                    PassBombToNextPlayer();
+                }
+            }
+        }
+    }
 
-    public void ActivateBomb()
+    private void ActivateBomb()
     {
         bombIsActive = true;
 
@@ -180,14 +174,14 @@ public class LayBomb : MonoBehaviour
         }
     }
 
-    public void PassBombToNextPlayer()
+    private void PassBombToNextPlayer()
     {
         if (!canPassBomb) return;
 
         // Find next player (not the current holder)
-        List<LayEggs> availablePlayers = new List<LayEggs>();
+        List<PlayerData> availablePlayers = new List<PlayerData>();
 
-        foreach (LayEggs player in players)
+        foreach (PlayerData player in players)
         {
             if (player != currentBombHolder)
             {
@@ -266,7 +260,8 @@ public class LayBomb : MonoBehaviour
         // Store eliminated player index
         eliminatedPlayerIndex = players.IndexOf(currentBombHolder);
 
-
+        // Award points to all other players
+        AwardPointsToSurvivors();
 
         // Destroy bomb visual
         if (bombVisual != null)
@@ -278,6 +273,17 @@ public class LayBomb : MonoBehaviour
         StartCoroutine(EndGameAfterDelay());
     }
 
+    private void AwardPointsToSurvivors()
+    {
+        foreach (PlayerData player in players)
+        {
+            if (player != currentBombHolder)
+            {
+                // Award point to survivors
+                GameManager.instance.AddScoreToPlayer(player);
+            }
+        }
+    }
 
     private IEnumerator EndGameAfterDelay()
     {
@@ -297,4 +303,3 @@ public class LayBomb : MonoBehaviour
         }
     }
 }
-

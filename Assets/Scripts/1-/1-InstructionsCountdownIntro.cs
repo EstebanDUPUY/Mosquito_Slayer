@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class InstructionCountdownIntro : MonoBehaviour
+public class IntroFlowUI : MonoBehaviour
 {
     [Header("Panels & UI")]
     [SerializeField] GameObject instructionsPanel;

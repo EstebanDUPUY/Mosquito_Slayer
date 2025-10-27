@@ -49,7 +49,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5347437032997037601
 Transform:
   m_ObjectHideFlags: 0
@@ -235,7 +235,6 @@ MonoBehaviour:
   - {fileID: 5197239699145239233}
   hud: {fileID: 7109437934669492528}
   human: {fileID: 6089175039780721414}
-  laser: {fileID: 0}
   attentionThreshold: 0.15
   minGapAfterAttack: 1
 --- !u!1001 &1167026210221174224
@@ -568,10 +567,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 1126965488655176879, guid: c43fe61b4eafff842a7a5a86423e4b6d, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6415226003400585055, guid: c43fe61b4eafff842a7a5a86423e4b6d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.56371
@@ -611,26 +606,6 @@ PrefabInstance:
     - target: {fileID: 6415226003400585055, guid: c43fe61b4eafff842a7a5a86423e4b6d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8720214602476999177, guid: c43fe61b4eafff842a7a5a86423e4b6d, type: 3}
-      propertyPath: m_ActionEvents.Array.size
-      value: 19
-      objectReference: {fileID: 0}
-    - target: {fileID: 8720214602476999177, guid: c43fe61b4eafff842a7a5a86423e4b6d, type: 3}
-      propertyPath: m_ActionEvents.Array.data[17].m_ActionId
-      value: 3878f674-2af7-45df-8320-db5a6ffa0027
-      objectReference: {fileID: 0}
-    - target: {fileID: 8720214602476999177, guid: c43fe61b4eafff842a7a5a86423e4b6d, type: 3}
-      propertyPath: m_ActionEvents.Array.data[18].m_ActionId
-      value: 70137524-070a-494c-a628-167ec2558047
-      objectReference: {fileID: 0}
-    - target: {fileID: 8720214602476999177, guid: c43fe61b4eafff842a7a5a86423e4b6d, type: 3}
-      propertyPath: m_ActionEvents.Array.data[17].m_ActionName
-      value: 'Player/Action[/Keyboard/e,/XInputControllerWindows/buttonSouth]'
-      objectReference: {fileID: 0}
-    - target: {fileID: 8720214602476999177, guid: c43fe61b4eafff842a7a5a86423e4b6d, type: 3}
-      propertyPath: m_ActionEvents.Array.data[18].m_ActionName
-      value: 'Player/Sabo[/Keyboard/q,/XInputControllerWindows/buttonEast]'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

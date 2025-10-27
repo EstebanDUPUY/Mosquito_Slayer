@@ -89,7 +89,7 @@ public partial class @MoskilltoControls: IInputActionCollection2, IDisposable
     ""name"": ""MoskilltoControls"",
     ""maps"": [
         {
-            ""name"": ""MiniGame_Aim2"",
+            ""name"": ""MiniGame_Aim"",
             ""id"": ""6e449731-1683-47c3-b6ca-cdaaeacfc8cc"",
             ""actions"": [
                 {
@@ -161,15 +161,15 @@ public partial class @MoskilltoControls: IInputActionCollection2, IDisposable
     ],
     ""controlSchemes"": []
 }");
-        // MiniGame_Aim2
-        m_MiniGame_Aim2 = asset.FindActionMap("MiniGame_Aim2", throwIfNotFound: true);
-        m_MiniGame_Aim2_Shoot = m_MiniGame_Aim2.FindAction("Shoot", throwIfNotFound: true);
-        m_MiniGame_Aim2_Sabotage = m_MiniGame_Aim2.FindAction("Sabotage", throwIfNotFound: true);
+        // MiniGame_Aim
+        m_MiniGame_Aim = asset.FindActionMap("MiniGame_Aim", throwIfNotFound: true);
+        m_MiniGame_Aim_Shoot = m_MiniGame_Aim.FindAction("Shoot", throwIfNotFound: true);
+        m_MiniGame_Aim_Sabotage = m_MiniGame_Aim.FindAction("Sabotage", throwIfNotFound: true);
     }
 
     ~@MoskilltoControls()
     {
-        UnityEngine.Debug.Assert(!m_MiniGame_Aim2.enabled, "This will cause a leak and performance issues, MoskilltoControls.MiniGame_Aim2.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_MiniGame_Aim.enabled, "This will cause a leak and performance issues, MoskilltoControls.MiniGame_Aim.Disable() has not been called.");
     }
 
     /// <summary>
@@ -242,34 +242,34 @@ public partial class @MoskilltoControls: IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // MiniGame_Aim2
-    private readonly InputActionMap m_MiniGame_Aim2;
-    private List<IMiniGame_Aim2Actions> m_MiniGame_Aim2ActionsCallbackInterfaces = new List<IMiniGame_Aim2Actions>();
-    private readonly InputAction m_MiniGame_Aim2_Shoot;
-    private readonly InputAction m_MiniGame_Aim2_Sabotage;
+    // MiniGame_Aim
+    private readonly InputActionMap m_MiniGame_Aim;
+    private List<IMiniGame_AimActions> m_MiniGame_AimActionsCallbackInterfaces = new List<IMiniGame_AimActions>();
+    private readonly InputAction m_MiniGame_Aim_Shoot;
+    private readonly InputAction m_MiniGame_Aim_Sabotage;
     /// <summary>
-    /// Provides access to input actions defined in input action map "MiniGame_Aim2".
+    /// Provides access to input actions defined in input action map "MiniGame_Aim".
     /// </summary>
-    public struct MiniGame_Aim2Actions
+    public struct MiniGame_AimActions
     {
         private @MoskilltoControls m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public MiniGame_Aim2Actions(@MoskilltoControls wrapper) { m_Wrapper = wrapper; }
+        public MiniGame_AimActions(@MoskilltoControls wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "MiniGame_Aim2/Shoot".
+        /// Provides access to the underlying input action "MiniGame_Aim/Shoot".
         /// </summary>
-        public InputAction @Shoot => m_Wrapper.m_MiniGame_Aim2_Shoot;
+        public InputAction @Shoot => m_Wrapper.m_MiniGame_Aim_Shoot;
         /// <summary>
-        /// Provides access to the underlying input action "MiniGame_Aim2/Sabotage".
+        /// Provides access to the underlying input action "MiniGame_Aim/Sabotage".
         /// </summary>
-        public InputAction @Sabotage => m_Wrapper.m_MiniGame_Aim2_Sabotage;
+        public InputAction @Sabotage => m_Wrapper.m_MiniGame_Aim_Sabotage;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_MiniGame_Aim2; }
+        public InputActionMap Get() { return m_Wrapper.m_MiniGame_Aim; }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
         public void Enable() { Get().Enable(); }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -277,9 +277,9 @@ public partial class @MoskilltoControls: IInputActionCollection2, IDisposable
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
         public bool enabled => Get().enabled;
         /// <summary>
-        /// Implicitly converts an <see ref="MiniGame_Aim2Actions" /> to an <see ref="InputActionMap" /> instance.
+        /// Implicitly converts an <see ref="MiniGame_AimActions" /> to an <see ref="InputActionMap" /> instance.
         /// </summary>
-        public static implicit operator InputActionMap(MiniGame_Aim2Actions set) { return set.Get(); }
+        public static implicit operator InputActionMap(MiniGame_AimActions set) { return set.Get(); }
         /// <summary>
         /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
         /// </summary>
@@ -287,11 +287,11 @@ public partial class @MoskilltoControls: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
         /// </remarks>
-        /// <seealso cref="MiniGame_Aim2Actions" />
-        public void AddCallbacks(IMiniGame_Aim2Actions instance)
+        /// <seealso cref="MiniGame_AimActions" />
+        public void AddCallbacks(IMiniGame_AimActions instance)
         {
-            if (instance == null || m_Wrapper.m_MiniGame_Aim2ActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_MiniGame_Aim2ActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_MiniGame_AimActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_MiniGame_AimActionsCallbackInterfaces.Add(instance);
             @Shoot.started += instance.OnShoot;
             @Shoot.performed += instance.OnShoot;
             @Shoot.canceled += instance.OnShoot;
@@ -306,8 +306,8 @@ public partial class @MoskilltoControls: IInputActionCollection2, IDisposable
         /// <remarks>
         /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
         /// </remarks>
-        /// <seealso cref="MiniGame_Aim2Actions" />
-        private void UnregisterCallbacks(IMiniGame_Aim2Actions instance)
+        /// <seealso cref="MiniGame_AimActions" />
+        private void UnregisterCallbacks(IMiniGame_AimActions instance)
         {
             @Shoot.started -= instance.OnShoot;
             @Shoot.performed -= instance.OnShoot;
@@ -318,12 +318,12 @@ public partial class @MoskilltoControls: IInputActionCollection2, IDisposable
         }
 
         /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="MiniGame_Aim2Actions.UnregisterCallbacks(IMiniGame_Aim2Actions)" />.
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="MiniGame_AimActions.UnregisterCallbacks(IMiniGame_AimActions)" />.
         /// </summary>
-        /// <seealso cref="MiniGame_Aim2Actions.UnregisterCallbacks(IMiniGame_Aim2Actions)" />
-        public void RemoveCallbacks(IMiniGame_Aim2Actions instance)
+        /// <seealso cref="MiniGame_AimActions.UnregisterCallbacks(IMiniGame_AimActions)" />
+        public void RemoveCallbacks(IMiniGame_AimActions instance)
         {
-            if (m_Wrapper.m_MiniGame_Aim2ActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_MiniGame_AimActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
@@ -333,27 +333,27 @@ public partial class @MoskilltoControls: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
         /// </remarks>
-        /// <seealso cref="MiniGame_Aim2Actions.AddCallbacks(IMiniGame_Aim2Actions)" />
-        /// <seealso cref="MiniGame_Aim2Actions.RemoveCallbacks(IMiniGame_Aim2Actions)" />
-        /// <seealso cref="MiniGame_Aim2Actions.UnregisterCallbacks(IMiniGame_Aim2Actions)" />
-        public void SetCallbacks(IMiniGame_Aim2Actions instance)
+        /// <seealso cref="MiniGame_AimActions.AddCallbacks(IMiniGame_AimActions)" />
+        /// <seealso cref="MiniGame_AimActions.RemoveCallbacks(IMiniGame_AimActions)" />
+        /// <seealso cref="MiniGame_AimActions.UnregisterCallbacks(IMiniGame_AimActions)" />
+        public void SetCallbacks(IMiniGame_AimActions instance)
         {
-            foreach (var item in m_Wrapper.m_MiniGame_Aim2ActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_MiniGame_AimActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_MiniGame_Aim2ActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_MiniGame_AimActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
     /// <summary>
-    /// Provides a new <see cref="MiniGame_Aim2Actions" /> instance referencing this action map.
+    /// Provides a new <see cref="MiniGame_AimActions" /> instance referencing this action map.
     /// </summary>
-    public MiniGame_Aim2Actions @MiniGame_Aim2 => new MiniGame_Aim2Actions(this);
+    public MiniGame_AimActions @MiniGame_Aim => new MiniGame_AimActions(this);
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "MiniGame_Aim2" which allows adding and removing callbacks.
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "MiniGame_Aim" which allows adding and removing callbacks.
     /// </summary>
-    /// <seealso cref="MiniGame_Aim2Actions.AddCallbacks(IMiniGame_Aim2Actions)" />
-    /// <seealso cref="MiniGame_Aim2Actions.RemoveCallbacks(IMiniGame_Aim2Actions)" />
-    public interface IMiniGame_Aim2Actions
+    /// <seealso cref="MiniGame_AimActions.AddCallbacks(IMiniGame_AimActions)" />
+    /// <seealso cref="MiniGame_AimActions.RemoveCallbacks(IMiniGame_AimActions)" />
+    public interface IMiniGame_AimActions
     {
         /// <summary>
         /// Method invoked when associated input action "Shoot" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
