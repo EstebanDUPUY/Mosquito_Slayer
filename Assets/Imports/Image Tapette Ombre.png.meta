@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 94c1159d76391d344b2179443ea2405d
+guid: c9e08faca009be94f9d4308a058dd3b0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8191101489342738605
-    second: Racket_ombre_0
+      213: -8250256253412884794
+    second: Image Tapette Ombre_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Racket_ombre_0
+      name: Image Tapette Ombre_0
       rect:
         serializedVersion: 2
-        x: 23
-        y: 14
-        width: 567
-        height: 570
+        x: 105
+        y: 75
+        width: 605
+        height: 1130
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 35f8d80089c535e80800000000000000
-      internalID: -8191101489342738605
+      spriteID: 6ce316536a3318d80800000000000000
+      internalID: -8250256253412884794
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Racket_ombre_0: -8191101489342738605
+      Image Tapette Ombre_0: -8250256253412884794
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

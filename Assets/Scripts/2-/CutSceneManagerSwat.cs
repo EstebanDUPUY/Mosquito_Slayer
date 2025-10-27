@@ -87,5 +87,41 @@ public class CutSceneManagerSwat : MonoBehaviour
         OnCutsceneFinished?.Invoke();
     }
 
-   
+    private void OnDrawGizmos()
+    {
+
+        // Récupère l'aspect ratio (Largeur/Hauteur) de ta fenêtre de scène
+        float sceneAspect = Camera.current != null ? Camera.current.aspect : 16f / 9f;
+
+        // --- 1. Dessine le cadre de l'INTRO ---
+        if (introTarget != null)
+        {
+
+            // Calcule la hauteur et la largeur de la caméra
+            float introHeight = introZoom * 2f;
+            float introWidth = introHeight * sceneAspect;
+            Vector3 introSize = new Vector3(introWidth, introHeight, 0.1f);
+
+            // Applique la position et la rotation de ta cible "introTarget"
+            Gizmos.matrix = Matrix4x4.TRS(introTarget.position, introTarget.rotation, Vector3.one);
+
+            // Dessine une boîte bleue
+            Gizmos.color = new Color(0f, 0.5f, 1f, 0.75f); //Bleu
+            Gizmos.DrawWireCube(Vector3.zero, introSize);
+        }
+
+        // --- 2. Dessine le cadre du JEU ---
+        if (gameTarget != null)
+        {
+            float gameHeight = gameZoom * 2f;
+            float gameWidth = gameHeight * sceneAspect;
+            Vector3 gameSize = new Vector3(gameWidth, gameHeight, 0.1f);
+
+            Gizmos.matrix = Matrix4x4.TRS(gameTarget.position, gameTarget.rotation, Vector3.one);
+
+            Gizmos.color = new Color(0f, 1f, 0.5f, 0.75f); //Vert
+            Gizmos.DrawWireCube(Vector3.zero, gameSize);
+        }
+    }
+
 }
