@@ -9,6 +9,8 @@ public class PlayerData : MonoBehaviour
     public int myDeviceIdPV;
     public SpriteRenderer spriteRendererRef;
     public int scorePV;
+    // ordre dans lequel ce joueur a rejoint (0,1,2,3)
+    public int joinOrderPV;
 
     private void Awake()
     {
