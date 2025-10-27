@@ -377,7 +377,7 @@ MonoBehaviour:
   eggsGO: {fileID: 3532682619143062149, guid: 9f83ee8b227c65242b521d31ee65877c, type: 3}
   eggCount: 0
   whereShouldEggBe: {x: 10, y: 10}
-  wherePlayerIs: {fileID: 0}
+  wherePlayerIs: {fileID: 744810023}
   hasBomb: 0
   throwBombMdr: {fileID: 311401193}
   linkZelda: {fileID: 0}
@@ -474,7 +474,7 @@ MonoBehaviour:
   eggsGO: {fileID: 3532682619143062149, guid: 9f83ee8b227c65242b521d31ee65877c, type: 3}
   eggCount: 0
   whereShouldEggBe: {x: 10, y: 10}
-  wherePlayerIs: {fileID: 0}
+  wherePlayerIs: {fileID: 745503047}
   hasBomb: 0
   throwBombMdr: {fileID: 311401193}
   linkZelda: {fileID: 0}
@@ -526,7 +526,7 @@ MonoBehaviour:
   eggsGO: {fileID: 3532682619143062149, guid: 9f83ee8b227c65242b521d31ee65877c, type: 3}
   eggCount: 0
   whereShouldEggBe: {x: 10, y: 10}
-  wherePlayerIs: {fileID: 0}
+  wherePlayerIs: {fileID: 784641597}
   hasBomb: 0
   throwBombMdr: {fileID: 311401193}
   linkZelda: {fileID: 0}
@@ -1099,7 +1099,7 @@ MonoBehaviour:
   eggsGO: {fileID: 3532682619143062149, guid: 9f83ee8b227c65242b521d31ee65877c, type: 3}
   eggCount: 0
   whereShouldEggBe: {x: 10, y: 10}
-  wherePlayerIs: {fileID: 0}
+  wherePlayerIs: {fileID: 1314671322}
   hasBomb: 0
   throwBombMdr: {fileID: 311401193}
   linkZelda: {fileID: 0}

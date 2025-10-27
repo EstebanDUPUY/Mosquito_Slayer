@@ -63,7 +63,7 @@ public class SuccManager : MonoBehaviour
 
     void Start()
     {
-        StartRound(); // on démarre une nouvelle manche au lancement
+ 
     }
 
     void Update()

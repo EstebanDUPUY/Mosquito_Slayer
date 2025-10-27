@@ -216,6 +216,7 @@ MonoBehaviour:
   myDeviceIdPV: 0
   spriteRendererRef: {fileID: 8521034002466538593}
   scorePV: 0
+  joinOrderPV: 0
 --- !u!1 &5061734389069464172
 GameObject:
   m_ObjectHideFlags: 0

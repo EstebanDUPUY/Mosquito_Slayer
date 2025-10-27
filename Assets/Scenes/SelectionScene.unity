@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 37935526}
   - component: {fileID: 37935525}
   - component: {fileID: 37935528}
+  - component: {fileID: 37935529}
   m_Layer: 5
   m_Name: Player3
   m_TagString: Untagged
@@ -182,7 +183,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 1, g: 0, b: 0, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -268,8 +269,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSlotUI
   skinIndex: 3
   bloodClaimPanel: {fileID: 574615062}
-  outlineImage: {fileID: 0}
   joinManager: {fileID: 244487029}
+--- !u!114 &37935529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 37935523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bab0190c0ac85614a91af8eaca8e43ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterButtonSlotColor
+  button: {fileID: 37935525}
 --- !u!1 &244487026
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,6 +395,14 @@ MonoBehaviour:
   - {r: 0, g: 0, b: 1, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
   - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  neutralColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.4}
+  allSlots:
+  - {fileID: 1310764152}
+  - {fileID: 1761341961}
+  - {fileID: 1613980823}
+  - {fileID: 37935528}
+  eventSystem: {fileID: 1563133516}
+  confirmAction: {fileID: -3072467520216744775, guid: f48f399be3514d7478715cbc5914f9be, type: 3}
 --- !u!1 &524290569
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,81 +658,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &746022798
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 746022799}
-  - component: {fileID: 746022801}
-  - component: {fileID: 746022800}
-  m_Layer: 5
-  m_Name: Outline
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &746022799
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 746022798}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1310764148}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.7314, y: -1.7313}
-  m_SizeDelta: {x: 115.9285, y: 117.3135}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &746022800
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 746022798}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &746022801
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 746022798}
-  m_CullTransparentMesh: 1
 --- !u!1 &827167995
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,7 +1023,7 @@ MonoBehaviour:
     m_NormalColor: {r: 0, g: 0, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.9082564, b: 0, a: 1}
     m_PressedColor: {r: 1, g: 0, b: 0, a: 1}
-    m_SelectedColor: {r: 0, g: 0, b: 0, a: 1}
+    m_SelectedColor: {r: 1, g: 0, b: 0, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -1373,6 +1319,7 @@ GameObject:
   - component: {fileID: 1310764150}
   - component: {fileID: 1310764149}
   - component: {fileID: 1310764152}
+  - component: {fileID: 1310764153}
   m_Layer: 5
   m_Name: Player0
   m_TagString: Untagged
@@ -1392,7 +1339,6 @@ RectTransform:
   m_LocalScale: {x: 3.3, y: 3.3, z: 3.3}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 746022799}
   - {fileID: 1777319111}
   - {fileID: 902584749}
   m_Father: {fileID: 933673407}
@@ -1424,9 +1370,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 1, g: 0, b: 0, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -1510,8 +1456,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSlotUI
   skinIndex: 0
   bloodClaimPanel: {fileID: 1777319110}
-  outlineImage: {fileID: 0}
   joinManager: {fileID: 244487029}
+--- !u!114 &1310764153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310764147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bab0190c0ac85614a91af8eaca8e43ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterButtonSlotColor
+  button: {fileID: 1310764149}
 --- !u!1 &1500595597
 GameObject:
   m_ObjectHideFlags: 0
@@ -1799,11 +1757,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4937654075019607117, guid: a899df86dc378164d98b250f0e513c1a, type: 3}
       propertyPath: 'nonPlayedGames.Array.data[1]'
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4937654075019607117, guid: a899df86dc378164d98b250f0e513c1a, type: 3}
       propertyPath: 'nonPlayedGames.Array.data[2]'
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4937654075019607117, guid: a899df86dc378164d98b250f0e513c1a, type: 3}
       propertyPath: 'nonPlayedGames.Array.data[3]'
@@ -1831,6 +1789,7 @@ GameObject:
   - component: {fileID: 1613980821}
   - component: {fileID: 1613980820}
   - component: {fileID: 1613980823}
+  - component: {fileID: 1613980824}
   m_Layer: 5
   m_Name: Player2
   m_TagString: Untagged
@@ -1881,7 +1840,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 1, g: 0, b: 0, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -1967,8 +1926,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSlotUI
   skinIndex: 2
   bloodClaimPanel: {fileID: 524290569}
-  outlineImage: {fileID: 0}
   joinManager: {fileID: 244487029}
+--- !u!114 &1613980824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1613980818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bab0190c0ac85614a91af8eaca8e43ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterButtonSlotColor
+  button: {fileID: 1613980820}
 --- !u!1 &1761341956
 GameObject:
   m_ObjectHideFlags: 0
@@ -1982,6 +1953,7 @@ GameObject:
   - component: {fileID: 1761341959}
   - component: {fileID: 1761341958}
   - component: {fileID: 1761341961}
+  - component: {fileID: 1761341962}
   m_Layer: 5
   m_Name: Player1
   m_TagString: Untagged
@@ -2032,7 +2004,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 1, g: 0, b: 0, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -2118,8 +2090,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSlotUI
   skinIndex: 1
   bloodClaimPanel: {fileID: 1500595597}
-  outlineImage: {fileID: 0}
   joinManager: {fileID: 244487029}
+--- !u!114 &1761341962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1761341956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bab0190c0ac85614a91af8eaca8e43ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterButtonSlotColor
+  button: {fileID: 1761341958}
 --- !u!1 &1772552457
 GameObject:
   m_ObjectHideFlags: 0

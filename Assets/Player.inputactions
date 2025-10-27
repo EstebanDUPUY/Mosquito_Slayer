@@ -312,10 +312,10 @@
                 {
                     "name": "",
                     "id": "22154ca1-f978-47ac-98e1-0b1d6919e614",
-                    "path": "<Keyboard>/anyKey",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Join",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -323,10 +323,10 @@
                 {
                     "name": "",
                     "id": "b5e944ab-bc4e-45a8-a0ae-30f884c1756c",
-                    "path": "<Gamepad>/start",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "Join",
                     "isComposite": false,
                     "isPartOfComposite": false
