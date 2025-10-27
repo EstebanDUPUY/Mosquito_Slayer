@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
     private void AvengersEndGame()
     {
-        ChangeScene("Score");
+        ChangeScene("FinalScore");
     }
 
     private void AvengersLateGame()

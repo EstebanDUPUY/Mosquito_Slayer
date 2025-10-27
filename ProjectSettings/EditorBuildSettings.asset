@@ -24,7 +24,7 @@ EditorBuildSettings:
     path: Assets/Scenes/4-GET_LAID.unity
     guid: 6e4a6f3c4de9d1940bc308b5b4212b9e
   - enabled: 1
-    path: Assets/Scenes/Score.unity
+    path: Assets/Scenes/FinalScore.unity
     guid: 7ac22a7e82f996d45937b091dd8a81b6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: f48f399be3514d7478715cbc5914f9be, type: 3}
